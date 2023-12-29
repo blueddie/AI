@@ -23,3 +23,4 @@ print("loss : ", loss)
 result = model.predict([4])
 print("4의 예측 값은 : ", result)
 
+# 커밋 확인
