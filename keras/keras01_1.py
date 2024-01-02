@@ -17,7 +17,7 @@ model.add(Dense(1, input_dim=1))  # input_dim=1 => x (input),  그 앞의 숫자
 
 #3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam') # 'mse' :  제곱하는 방식으로 양수로 만들겠다
-model.fit(x, y, epochs=5000) # 최적의 weight 생성
+model.fit(x, y, epochs=9000) # 최적의 weight 생성
 
 #4. 평가 , 예측
 loss = model.evaluate(x, y)
