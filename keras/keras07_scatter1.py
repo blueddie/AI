@@ -34,14 +34,12 @@ model.fit(x_train, y_train, epochs=1100, batch_size=1)
 
 # 평가, 예측
 loss = model.evaluate(x_test, y_test)
-results = model.predict([11])
+results = model.predict(x)
 print("loss : " , loss)
 print("results : " , results)
-# Epoch 1100/1100
-# 7/7 [==============================] - 0s 0s/step - loss: 0.3006
-# 1/1 [==============================] - 0s 91ms/step - loss: 0.0129
-# 1/1 [==============================] - 0s 66ms/step
-# loss :  0.012949291616678238
-# results :  [[10.870742]]
 
+import matplotlib.pyplot as plt
 
+plt.scatter(x,y)
+plt.plot(x, results, color='red')
+plt.show()
