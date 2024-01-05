@@ -52,9 +52,10 @@ model.add(Dense(4))
 model.add(Dense(1))
 
 #.컴파일, 훈련
-model.compile(loss='mse', optimizer='adam')
+model.compile(loss='mae', optimizer='adam')
 start_time = time.time()
-model.fit(x_train, y_train, epochs=3000, batch_size=50)
+
+model.fit(x_train, y_train, epochs=5000, batch_size=80)
 end_time = time.time()
 #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -71,3 +72,8 @@ print("소요 시간 : ", end_time - start_time)
 # R2 score :  0.8032686661713639
 # loss :  14.15125846862793
 # 소요 시간 :  18.613470554351807
+
+# batch_size=80, epochs=5000 random_state=3 train_size=0.9
+# R2 score :  0.8138034683216676
+# loss :  13.393470764160156
+# 소요 시간 :  20.088626384735107

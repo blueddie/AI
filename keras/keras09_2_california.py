@@ -16,7 +16,7 @@ y = datasets.target
 # print(y)
 # print(x.shape, y.shape)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=15, train_size=0.9)
+x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=3, train_size=0.9)
 
 #2.
 model = Sequential()
@@ -28,9 +28,9 @@ model.add(Dense(4))
 model.add(Dense(1))
 
 #3.
-model.compile(loss='mse', optimizer='adam')
+model.compile(loss='mae', optimizer='adam')
 start_time = time.time()
-model.fit(x_train, y_train, epochs=5000, batch_size=400)
+model.fit(x_train, y_train, epochs=7000, batch_size=600)
 end_time = time.time()
 
 #4.
@@ -74,3 +74,20 @@ print("소요 시간 : ", round(end_time - start_time, 2), "seconds")
 # R2 score :  0.6233230460943255
 # loss :  0.5075541734695435
 # 소요 시간 :  130.5 seconds
+
+# ------------------------------------------------
+#loss='mae'
+# batch_size=600 epochs=7000 train_size=0.9 random_state=3
+# R2 score :  0.6100251178159226
+# loss :  0.49994075298309326
+
+# batch_size=400 epochs=6000 train_size=0.9 random_state=3
+# R2 score :  0.619634714537485
+# loss :  0.4942631423473358
+# 소요 시간 :  158.23 seconds
+
+# batch_size=400 epochs=5000 train_size=0.9 random_state=3
+# R2 score :  0.5873410290725203
+# loss :  0.5108545422554016
+# 소요 시간 :  134.33 seconds
+
