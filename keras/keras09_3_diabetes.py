@@ -17,9 +17,9 @@ y = datasets.target
 # print(x.shape)    (442, 10)
 # print(y.shape)    (442,)
 
-# print(datasets.feature_names)
+print(datasets.feature_names)
 # print(datasets.DESCR)
-
+'''
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1226, train_size=0.9)
 # print(x_train.shape)
 # print(y_train.shape)
@@ -88,3 +88,4 @@ print("소요 시간 : ", round(end_time - start_time, 2), "seconds")
 # R2 score :  0.7249858415964545
 # loss :  36.09334182739258
 # 소요 시간 :  3.1 seconds
+'''
