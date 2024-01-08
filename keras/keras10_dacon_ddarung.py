@@ -50,11 +50,11 @@ print(submission_csv)
 #---------------------------------------------------------------------------위2개각 day01 결측치 처리
 
 
-X = train_csv.drop(['count', 'hour_bef_windspeed', 'hour_bef_ozone', 'hour_bef_pm2.5'], axis=1)
+X = train_csv.drop(['count', 'hour_bef_ozone', 'hour_bef_pm2.5','hour_bef_pm10'], axis=1)
 
 y = train_csv["count"]
 
-test_csv = test_csv.drop(['hour_bef_windspeed', 'hour_bef_ozone', 'hour_bef_pm2.5'], axis=1)
+test_csv = test_csv.drop(['hour_bef_ozone', 'hour_bef_pm2.5','hour_bef_pm10'], axis=1)
 test_csv = test_csv.fillna(test_csv.mean())
 
 
@@ -88,15 +88,16 @@ X.loc[[1553],['hour_bef_humidity']] = 82.0
 
 # print(X[X['hour_bef_visibility'].isnull()])
 X['hour_bef_visibility'] = X['hour_bef_visibility'].fillna(X['hour_bef_visibility'].mean())
-X['hour_bef_pm10'] = X['hour_bef_pm10'].fillna(X['hour_bef_pm10'].mean())
+X['hour_bef_windspeed'] = X['hour_bef_windspeed'].fillna(X['hour_bef_windspeed'].mean())
+# X['hour_bef_pm10'] = X['hour_bef_pm10'].fillna(X['hour_bef_pm10'].mean())
 
 
 
 print(test_csv.info())
 
-first_name = "submission_0106_2_"
+first_name = "submission_0108_1_"
 second_name = ".csv"
-i = 1
+i = 120
 haha = 0
 
 #2. 모델
@@ -118,13 +119,13 @@ print(y)
 
 
 def auto_jjang(a,b):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.9, random_state=a)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=a)
     print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
     #3
     model.compile(loss='mse', optimizer='adam')
-    model.fit(X_train, y_train, epochs=100, batch_size=b)
+    model.fit(X_train, y_train, epochs=200, batch_size=b)
     #4. 평가,예측
-    loss = model.evaluate(X_test, y_test)
+    loss = abs(model.evaluate(X_test, y_test))
     y_predict = model.predict(X_test)
     r2 = r2_score(y_test, y_predict)
 
@@ -139,45 +140,27 @@ def auto_jjang(a,b):
     ############### submission.csv 만들기 (count column에 값만 넣어주면 됨) ################
     submission_csv['count'] = y_submit
 
-    return abs(loss), r2
+    return loss, r2
 #---------------------
-min_loss = 100000
+min_loss = 2800
 max_r2 = 0.65
-while haha <= 10 :
-    r = random.randrange(1,1300)
-    bs = 0
-    rs = 0
+while haha <= 100 :
+    r = random.randrange(16,65)
     
     loss, r2 = auto_jjang(i, r)
     
-    if abs(loss)< min_loss and r2 > max_r2 :
-        
-        r2 > max_r2
+    if loss< min_loss and r2 > max_r2 :
+          
         bs = r  
         rs = i
         submission_csv.to_csv(path + first_name + str(bs) + "and" + str(i) +"andLoss" + str(loss) +"andR2" + str(r2) + second_name, index=False)
         haha = haha + 1
         i = i + 1
         max_r2 = r2 + 0.01
-        min_loss = loss - 2
+        min_loss = loss - 1
     else :
         i = i + 1
-           
-#--------------------------
 
-
-
- 
-#003
-#epochs=100, batch_size=5 train_size=0.85, random_state=3
-# loss :  2845.761962890625
-# r2 :  0.6179690099468945
-
-#004
-#epochs=100, batch_size=4 train_size=0.85, random_state=3
-# loss :  2818.72021484375
-# r2 :  0.6215992491037716
-
-#0005
+          
 
 
