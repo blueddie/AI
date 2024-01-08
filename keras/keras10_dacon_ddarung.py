@@ -142,7 +142,7 @@ def auto_jjang(a,b):
 
     return loss, r2
 #---------------------
-min_loss = 2800
+min_loss = 200
 max_r2 = 0.65
 while haha <= 100 :
     r = random.randrange(16,65)
