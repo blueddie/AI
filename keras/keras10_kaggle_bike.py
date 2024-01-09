@@ -32,10 +32,10 @@ y = train_csv['count']
 model = Sequential()
 model.add(Dense(8, input_dim=8, activation='relu'))
 model.add(Dense(16, activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(8, activation='relu'))
+model.add(Dense(32))
+model.add(Dense(8))
 model.add(Dense(4, activation='relu'))
-model.add(Dense(1))
+model.add(Dense(1, activation='relu'))
 
 # X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=3)
 # model.compile(loss='mse', optimizer='adam')
@@ -51,48 +51,54 @@ model.add(Dense(1))
 
 # y_predict = model.predict(X_test)
 
-def RMSE(y_test, y_predict):
-    rmse = np.sqrt(mean_squared_error(y_test, y_predict))
+# def RMSE(y_test, y_predict):
+#     rmse = np.sqrt(mean_squared_error(y_test, y_predict))
     
-    return rmse
+#     return rmse
 
-# def RMSLE(y_test, y_predict):
-#     rmsle = np.sqrt(mean_squared_log_error(y_test, y_predict))
-    
-#     return rmsle
+def RMSLE(y_test, y_predict):
+
+    rmsle = np.sqrt(mean_squared_log_error(y_test, y_predict))
+        
+    return rmsle
 
 
 def auto(a,b):
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.9, random_state=a)
     model.compile(loss='mse', optimizer='adam')
-    model.fit(X_train, y_train, epochs=800, batch_size=b, verbose=1)
+    model.fit(X_train, y_train, epochs=120, batch_size=b, verbose=0)
     loss = model.evaluate(X_test, y_test)
     y_predict = model.predict(X_test)
     r2 = r2_score(y_test, y_predict)
     y_submit = model.predict([test_csv])
     submission_csv['count'] = y_submit
+    if submission_csv['count'].min() < 0 :
+        return 0, -1 ,0
     # print("MSE :" , loss)
-    rmse = RMSE(y_test, y_predict)
-    min = submission_csv['count'].min()
+    else :
+        
+        rmsle = RMSLE(y_test, y_predict)
+        min = submission_csv['count'].min()
+        return rmsle, min, loss
     # submission_csv['count'][(submission_csv['count'] < 0)] = 0
     # print("음수 갯수:", submission_csv[submission_csv['count'] < 0].count())
     
-    return rmse, min
 
 
 
 count = 0
 min_loss = 1000000
-min_rmse = 150
+min_rmsle = 150
 random_state = 0
-file_name = "submission_0108_2_"
+file_name = "submission_0109_1_"
 last_name = ".csv"
 
 while True :
-    batch_size = random.randrange(64, 257)
-    random_state += 1
-    rmse, min = auto(random_state, batch_size)
-    if min > 0 and rmse < min_rmse :
-        min_rmse = rmse
-        rmse = round(rmse, 2)
-        submission_csv.to_csv(path + file_name + str(batch_size) + "and" + str(random_state) +"andRMSE_" + str(rmse) + last_name , index=False)
+    batch_size = random.randrange(256, 513)
+    random_state = random.randrange(1, 999999)
+    rmsle, min, loss = auto(random_state, batch_size)
+    if min > 0 and rmsle < min_rmsle:
+        min_rmsle = rmsle
+        min_loss = loss
+        rmsle = round(rmsle, 2)
+        submission_csv.to_csv(path + file_name + str(batch_size) + "and" + str(random_state) +"andRMSE_" + str(rmsle) + last_name , index=False)
