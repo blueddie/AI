@@ -42,7 +42,7 @@ def RMSE(y_test, y_predict):
 def auto(a,b) :
     X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=a)
     model.compile(loss='mse', optimizer='adam')
-    model.fit(X_train, y_train, epochs=200, batch_size=b, validation_split=0.2)
+    model.fit(X_train, y_train, epochs=100, batch_size=b, validation_split=0.2)
     loss = model.evaluate(X_test, y_test)
     y_predict = model.predict(X_test)
     r2 = r2_score(y_test, y_predict)
@@ -58,13 +58,19 @@ min_rmse = 1600
 max_r2 = 0.2  
 date = "0109_"
 last_name = ".csv"
+i = 1
 
 while True :
-    batch_size = random.randrange(256, 513)
-    random_state = random.randrange(1, 999999)
-    rmse, loss, r2 = auto(random_state, batch_size)
+    # batch_size = random.randrange(256, 513)
+    # random_state = random.randrange(1, 999999)
+    rmse, loss, r2 = auto(7, 150)
     if  rmse < min_rmse and r2 > max_r2:
         min_rmse = rmse
         max_r2 = r2
         rmse = round(rmse, 2)
-        submission_csv.to_csv(path + date + str(batch_size) + "and" + str(random_state) +"andRMSE_" + str(rmse) + last_name , index=False)
+        submission_csv.to_csv(path + date + str(i) +"andRMSE_" + last_name , index=False)
+        i += 1
+        
+        리스트 = [1,2,3,4,5]
+        튜플 = (1,2,3,4,5)
+        딕셔너리 = {'과일' : '사과','과일' : '사과', '가격' : '1200', '생산지' : '문경'}
