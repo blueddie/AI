@@ -95,18 +95,18 @@ X['hour_bef_windspeed'] = X['hour_bef_windspeed'].fillna(X['hour_bef_windspeed']
 
 print(test_csv.info())
 
-first_name = "submission_0108_1_"
+first_name = "submission_0109_2"
 second_name = ".csv"
-i = 120
+i = 1
 haha = 0
 
 #2. 모델
 model = Sequential()
-model.add(Dense(8, input_dim=6))
-model.add(Dense(16))
-model.add(Dense(32))
-model.add(Dense(8))
-model.add(Dense(4))
+model.add(Dense(8, input_dim=6, activation='relu'))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(8, activation='relu'))
+model.add(Dense(4, activation='relu'))
 model.add(Dense(1))
 
 
@@ -118,19 +118,19 @@ model.add(Dense(1))
 print(y)
 
 
-def auto_jjang(a,b):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=a)
+def auto_jjang():
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=53145880)
     print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
     #3
     model.compile(loss='mse', optimizer='adam')
-    model.fit(X_train, y_train, epochs=200, batch_size=b)
+    model.fit(X_train, y_train, epochs=1000, batch_size=32
+              , validation_split=0.2)
     #4. 평가,예측
     loss = model.evaluate(X_test, y_test)
     y_predict = model.predict(X_test)
     r2 = r2_score(y_test, y_predict)
 
     y_submit = model.predict([test_csv])
-    print(a)
     print("loss : ",loss)
     print("r2 : ", r2)
     # print(y_submit)
@@ -142,25 +142,33 @@ def auto_jjang(a,b):
 
     return loss, r2
 #---------------------
-min_loss = 200
-max_r2 = 0.65
-while haha <= 100 :
-    r = random.randrange(16,65)
+max_r2 = 0.6
+
+while True :
+    loss, r2 = auto_jjang()
+    if (r2 > max_r2) :
+        max_r2 = r2
+        submission_csv.to_csv(path  + first_name + str(r2) + second_name, index=False)
+        
     
-    loss, r2 = auto_jjang(i, r)
+
+
+
+
+# max_r2 = 0.60
+# while haha <= 100 :
+#     i = random.randrange(1,99999999)
+#     r = random.randrange(16,65)
+#     loss, r2 = auto_jjang(i, r)
     
-    if loss< min_loss and r2 > max_r2 :
+#     if r2 > max_r2 :
           
-        bs = r  
-        rs = i
-        submission_csv.to_csv(path + first_name + str(bs) + "and" + str(i) +"andLoss" + str(loss) +"andR2" + str(r2) + second_name, index=False)
-        haha = haha + 1
-        i = i + 1
-        max_r2 = r2 + 0.01
-        min_loss = loss - 1
-    else :
-        i = i + 1
-
-          
-
-
+#         bs = r  
+#         rs = i
+#         submission_csv.to_csv(path + first_name + str(bs)+ "and" + str(rs) +"andR2" + str(r2) + second_name, index=False)
+#         haha = haha + 1
+#         i = i + 1
+#         max_r2 = r2 + 0.01
+#         min_loss = loss - 1
+#     else :
+#         i = i + 1
