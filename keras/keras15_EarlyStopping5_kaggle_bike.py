@@ -16,15 +16,14 @@ submission_csv = pd.read_csv(path + "sampleSubmission.csv")
 
 X = train_csv.drop(['count', 'casual', 'registered'], axis=1)
 y = train_csv['count']
+test_csv = test_csv.drop([], axis=1)
 
 #2. 모델
 model = Sequential()
 model.add(Dense(8, input_dim=8, activation='relu'))
-model.add(Dense(16, activation='relu'))
 model.add(Dense(32, activation='relu'))
 model.add(Dense(8, activation='relu'))
 model.add(Dense(4, activation='relu'))
-model.add(Dense(3, activation='relu'))
 model.add(Dense(2, activation='relu'))
 model.add(Dense(1))
 
@@ -40,8 +39,9 @@ def RMSLE(y_test, y_predict):
 from keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='val_loss'
                    , mode='min'
-                   , patience=40
+                   , patience=90
                    , verbose=1
+                   , restore_best_weights=True
                    )
 
 # hist = model.fit(X_train, y_train, epochs=80, batch_size=150
@@ -58,13 +58,14 @@ es = EarlyStopping(monitor='val_loss'
 
 # submission_csv['count'] = y_submit
 
+# random_state=random_state
 def auto() :
     random_state = random.randrange(1, 999999999)
     batch_size = random.randrange(32, 257)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=random_state)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8,  stratify=X['season'], random_state=random_state)
     model.compile(loss='mse', optimizer='adam')
 
-    hist = model.fit(X_train, y_train, epochs=800, batch_size=batch_size
+    hist = model.fit(X_train, y_train, epochs=900, batch_size=batch_size
                      , validation_split=0.2 
                      , callbacks=[es]
                      )
@@ -81,7 +82,7 @@ def auto() :
 
 min_rmsle = 1.35
 max_r2 = 0.6
-date = "0109_"
+date = "0110_"
 extension_name = ".csv"
 
 # rmse, r2, rs, bs, hist = auto()
@@ -97,11 +98,10 @@ while True :
     
     if rmsle < min_rmsle:
         min_rmsle = rmsle
-        # max_r2 = r2
-        submission_csv.to_csv(path + date + str(rs) + "and"+ str(bs) + "and"+ str(rmsle) + extension_name, index=False)
+        submission_csv.to_csv(path + date + str(rs) +"and"+ str(bs) + "and"+ str(round(rmsle, 2)) + extension_name, index=False)
         
         
-
+# str(rs)
 
 
 
