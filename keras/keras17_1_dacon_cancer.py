@@ -99,6 +99,7 @@ def auto() :
 
     #4.
     loss = model.evaluate(X_test, y_test)
+   
     results = model.predict(X)
 
     y_predict = np.rint(model.predict(X_test))
@@ -107,17 +108,16 @@ def auto() :
     print(acc)
     y_submit = model.predict([test_csv])
     submission_csv['Outcome'] = np.rint(y_submit)
-    return acc, rs, bs
+    return acc, rs, bs , loss
 
-max_acc = 0.7
-stop = True
+max_acc = 0.85
 
 while True :
     
-    acc, rs, bs  = auto()
-    if acc > max_acc :
-        max_acc = acc
-        submission_csv.to_csv(path + "_relu_" + str(round(acc,2))+ "rs_" + str(rs) + "bs_"+ str(bs) +".csv" ,index=False)
+    acc, rs, bs, loss = auto()
+    if acc > max_acc:
+        
+        submission_csv.to_csv(path + "acc노갱신"+ str(round(acc,2))+ "rs_" + str(rs) + "bs_"+ str(bs) +".csv" ,index=False)
     
     
     

@@ -61,7 +61,7 @@ print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
 model.compile(loss='mse', optimizer='adam')
 start_time =time.time()
 
-hist = model.fit(X_train, y_train, epochs=1000, batch_size=32
+hist = model.fit(X_train, y_train, epochs=10, batch_size=32
             , validation_split=0.2)
 end_time = time.time()   
     
