@@ -43,8 +43,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=13, train
 
 #2
 model = Sequential()
-model.add(Dense(7, activation='softmax', input_dim=54))
-# model.add(Dense(7, activation='softmax'))
+model.add(Dense(7, input_dim=54))
+model.add(Dense(7, activation='softmax'))
 
 #3
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
