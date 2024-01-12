@@ -39,24 +39,26 @@ y = pd.get_dummies(y)
 # ohe = OneHotEncoder(sparse=True)
 # y = ohe.fit_transform(y).toarray()
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=13, train_size=0.8)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=15152, train_size=0.8)
 
 #2
 model = Sequential()
-model.add(Dense(7, input_dim=54))
+model.add(Dense(54, input_dim=54))
+model.add(Dense(120))
+model.add(Dense(28))
 model.add(Dense(7, activation='softmax'))
 
 #3
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='val_loss'
-                   , mode='min'
-                   , patience=100
+es = EarlyStopping(monitor='val_accuracy'
+                   , mode='max'
+                   , patience=50
                    , verbose=1
                    , restore_best_weights=True
                    )
-model.fit(X_train, y_train, epochs=5000, batch_size=6848
+model.fit(X_train, y_train, epochs=5000, batch_size=100
         , validation_split=0.2
         , callbacks=[es]
         )
@@ -84,3 +86,6 @@ def ACC(aaa, bbb):
 
 acc = ACC(y_test, y_predict)
 print("accuracy_score : ", acc )
+
+# accuracy_score :  0.7186819617393699
+# accuracy_score :  0.7237678889529531

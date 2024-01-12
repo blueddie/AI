@@ -135,6 +135,8 @@ print("accuracy_score : " , acc)
 
 
 
+
+
 # print("loss : ", loss[0])
 # print("accuracy : ", loss[1])
 

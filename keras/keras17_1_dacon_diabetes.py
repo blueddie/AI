@@ -13,7 +13,7 @@ def ACC(aaa, bbb):
     return accuracy_score(aaa,bbb)
 
 #1.
-path = "C://_data//dacon//cancer//"
+path = "C://_data//dacon//diabetes//"
 
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
 # print(train_csv)
@@ -44,13 +44,12 @@ model = Sequential()
 model.add(Dense(16,activation='relu', input_dim=8))
 model.add(Dense(32,activation='relu'))
 model.add(Dense(8,activation='relu'))
-model.add(Dense(4,activation='relu'))
-model.add(Dense(2,activation='relu'))
+model.add(Dense(8,activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='accuracy'
-                   , mode='max'
+es = EarlyStopping(monitor='val_loss'
+                   , mode='min'
                    , patience=80
                    , verbose=1
                    , restore_best_weights=True
@@ -86,7 +85,7 @@ es = EarlyStopping(monitor='accuracy'
 def auto() :
     rs = random.randrange(1,99999999)
     bs = random.randrange(32,257)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=rs, train_size=0.8)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=rs, train_size=0.85)
 
     model.compile(loss='binary_crossentropy', optimizer='adam'
                 , metrics=['accuracy']
@@ -116,8 +115,8 @@ while True :
     
     acc, rs, bs, loss = auto()
     if acc > max_acc:
-        
-        submission_csv.to_csv(path + "acc노갱신"+ str(round(acc,2))+ "rs_" + str(rs) + "bs_"+ str(bs) +".csv" ,index=False)
+        max_acc = acc
+        submission_csv.to_csv(path + "0112"+ str(round(acc,2))+ "rs_" + str(rs) + "bs_"+ str(bs) +".csv" ,index=False)
     
     
     
