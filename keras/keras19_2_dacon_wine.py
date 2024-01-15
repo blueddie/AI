@@ -49,16 +49,16 @@ print(y.shape)
 
 # #2
 model = Sequential()
-model.add(Dense(24, input_dim=12))
-model.add(Dense(50))
-model.add(Dense(31))
-model.add(Dense(12))
+model.add(Dense(8, input_dim=12))
+model.add(Dense(16))
+model.add(Dense(32))
+model.add(Dense(16))
 model.add(Dense(7, activation='softmax'))
 
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='accuracy'
+es = EarlyStopping(monitor='val_accuracy'
                    , mode='max'
-                   , patience=100
+                   , patience=120
                    , verbose=1
                    , restore_best_weights=True
                    )
@@ -66,7 +66,7 @@ es = EarlyStopping(monitor='accuracy'
 def auto() :
     rs = random.randrange(1,9999999)
     bs = random.randrange(16, 65)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=rs, train_size=0.8)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=rs, train_size=0.8, stratify=y)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.fit(X_train, y_train, epochs=1500, batch_size=bs
         , validation_split=0.2
@@ -83,13 +83,15 @@ def auto() :
     submission_csv['quality'] = y_submit + 3
     return acc, rs, loss, bs
 
-max_acc = 0.6
+max_acc = 0.59
+min_loss = 1.2
 while True:
     
     acc, rs, loss, bs = auto()
-    if acc > max_acc:
+    if acc > max_acc and loss < min_loss:
         max_acc = acc
-        submission_csv.to_csv(path + "1112_ov6" + str(rs) + "_" + str(bs)+ "_acc_" + str(round(acc,2)) + ".csv", index=False)
-    
+        min_loss
+        submission_csv.to_csv(path + "1113_acloss_" + str(rs) + "_" + str(bs)+ "_acc_" + str(round(acc,2)) + ".csv", index=False)
+        
 # acc, rs, bs, a =auto()
 # print(a)
