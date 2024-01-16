@@ -8,7 +8,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 from sklearn.linear_model import LinearRegression
 import random
 import time
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
+
 
 #1. 데이터
 path = "c:\\_data\\dacon\\ddarung\\"
@@ -51,7 +52,7 @@ model.add(Dense(1))
 from keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='val_loss'
                    , mode='min'
-                   , patience=50
+                   , patience=100
                    , verbose=1
                    , restore_best_weights=True
                    )
@@ -60,7 +61,7 @@ def RMSE(y_test, y_predict):
     
     return rmse
 
-def auto_jjang():
+def auto_jjang(test_csv):
     rs = random.randrange(1, 99999999)
     bs = random.randrange(32, 257)
     # rs = 56238592
@@ -68,27 +69,38 @@ def auto_jjang():
     # epo = random.randrange(100, 9999)
     
     
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, random_state=rs, stratify=X['hour'])
-    print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=rs)
+    scaler = MinMaxScaler()
+    scaler.fit(X_train)
+    x_train = scaler.transform(X_train)
+    x_test = scaler.transform(X_test)
+    test_csv = scaler.transform(test_csv)
+    
+    # print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
     #3
     model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
-    model.fit(X_train, y_train, epochs=1000, batch_size=bs
+    model.fit(X_train, y_train, epochs=1000, batch_size=32
               , validation_split=0.2
               , callbacks=[es]
               )
     #4. 평가,예측
     loss = model.evaluate(X_test, y_test)
     y_predict = model.predict(X_test)
-    # r2 = r2_score(y_test, y_predict)
-    # rmse = RMSE(y_test, y_predict)
+    r2 = r2_score(y_test, y_predict)
+    rmse = RMSE(y_test, y_predict)
     
     y_submit = model.predict([test_csv])
 
     submission_csv['count'] = y_submit
+    if rmse < 0.80 :
+        
+        submission_csv.to_csv(path + "0116_minmax" + str(round(rmse, 3)) + ".csv", index=False)
+    return loss[0], rmse
 
-    return loss
-#---------------------
-loss = auto_jjang()
-print(loss)
+loss, rmse = auto_jjang(test_csv)
+print("loss : ", loss)
+print("rmse : " , rmse)
 
-# 6760.9794921875, 0.010273972526192665 scalerX
+# [6708.2822265625, 0.0034246575087308884]  scaleX
+# [6410.08203125, 0.0]    scale
+

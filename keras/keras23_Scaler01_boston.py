@@ -31,41 +31,44 @@ scaler = MinMaxScaler()
 scaler.fit(x_train)
 x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
-print(np.min(x_train))
-print(np.min(x_test))
-print(np.max(x_train))
-print(np.max(x_test))
+# print(np.min(x_train))
+# print(np.min(x_test))
+# print(np.max(x_train))
+# print(np.max(x_test))
 
 #2 모델 구성
-# model = Sequential()
-# model.add(Dense(8, input_dim=13))
-# model.add(Dense(16))
-# model.add(Dense(32))
-# model.add(Dense(8))
-# model.add(Dense(4))
-# model.add(Dense(1))
+model = Sequential()
+model.add(Dense(8, input_dim=13))
+model.add(Dense(16))
+model.add(Dense(32))
+model.add(Dense(8))
+model.add(Dense(4))
+model.add(Dense(1))
 
 
-# #.컴파일, 훈련
-# from keras.callbacks import EarlyStopping
-# es = EarlyStopping(monitor='val_loss'
-#                    , mode='min'
-#                    , patience=10
-#                    , verbose=1
-#                    )
+#.컴파일, 훈련
+from keras.callbacks import EarlyStopping
+es = EarlyStopping(monitor='val_loss'
+                   , mode='min'
+                   , patience=10
+                   , verbose=1
+                   )
 
-# model.compile(loss='mae', optimizer='adam')
-# start_time = time.time()
+model.compile(loss='mae', optimizer='adam')
+start_time = time.time()
 
-# model.fit(x_train, y_train, epochs=5000, batch_size=80)
-# end_time = time.time()
-# #4. 평가, 예측
-# loss = model.evaluate(x_test, y_test)
-# y_predict = model.predict(x_test)
-# results = model.predict(x)
+model.fit(x_train, y_train, epochs=1000, batch_size=80)
+end_time = time.time()
+#4. 평가, 예측
+loss = model.evaluate(x_test, y_test)
+y_predict = model.predict(x_test)
+results = model.predict(x)
 
-# r2 = r2_score(y_test, y_predict)
-# print("R2 score : ", r2)
-# print("loss : " , loss)
+r2 = r2_score(y_test, y_predict)
+print("R2 score : ", r2)
+print("loss : " , loss)
 
-# print("소요 시간 : ", end_time - start_time)
+print("소요 시간 : ", end_time - start_time)
+
+# loss :  2.5283851623535156    scaler
+# loss :  2.8700921535491943    scalerX
