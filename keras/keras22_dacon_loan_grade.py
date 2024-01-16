@@ -7,6 +7,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 import random
+from sklearn.preprocessing import MinMaxScaler
 
 path = "C:\\_data\dacon\\loan_grade\\"
 
@@ -53,6 +54,10 @@ test_str = test_csv['대출기간'].str.slice(0, 3)
 train_csv['대출기간'] = pd.to_numeric(train_str)
 test_csv['대출기간'] = pd.to_numeric(test_str)
 
+encoder.fit(train_csv['대출기간'])
+train_csv['대출기간'] = encoder.transform(train_csv['대출기간'])
+test_csv['대출기간'] = encoder.transform(test_csv['대출기간'])
+
 train_csv['근로기간'] = train_csv['근로기간'].str.slice(0, 2)
 test_csv['근로기간'] = test_csv['근로기간'].str.slice(0, 2)
 train_csv['근로기간'] = train_csv['근로기간'].str.strip()
@@ -75,6 +80,11 @@ y = train_csv['대출등급']
 # print(y)  #(96293, 7)
 # # print(y.idxmax(axis=1))
 
+# ------ mms
+# mms = MinMaxScaler()
+# mms.fit(X)
+# X = mms.transform(X)
+# test_csv = mms.transform(test_csv)
 
 #-------- sklearn
 y = y.values.reshape(-1, 1)
@@ -95,29 +105,37 @@ y = OneHotEncoder(sparse=False).fit_transform(y)
 
 #2
 model = Sequential()
-model.add(Dense(64, input_shape=(13,)))
-model.add(Dense(32))
-model.add(Dense(128))
-model.add(Dense(256))
-model.add(Dense(128))
-model.add(Dense(32))
+model.add(Dense(130, activation='relu', input_shape=(13,)))
+model.add(Dense(100))
+model.add(Dense(80))
+model.add(Dense(50))
+model.add(Dense(25))
+model.add(Dense(14, activation='relu'))
 model.add(Dense(7, activation='softmax'))
 
 from keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor='val_loss'
-                   , mode='min'
-                   , patience=150
+es = EarlyStopping(monitor='val_accuracy'
+                   , mode='max'
+                   , patience=200
                    , verbose=1
                    , restore_best_weights=True
                    )
 
+mms = MinMaxScaler()
 
-def auto() :
-    rs = random.randrange(1, 99999999)
-    bs = random.randrange(256, 1025)
-    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.85, stratify=y)
+def auto(test_csv) :
+    rs = random.randrange(2, 99999999)
+    bs = random.randrange(5000, 11999)
+    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.75, stratify=y)
+    
+    #---mms
+    mms.fit(X_train)
+    X_train = mms.transform(X_train)
+    X_test = mms.transform(X_test)
+    test_csv = mms.transform(test_csv)
+    # -------
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    hist = model.fit(X_train, y_train, epochs=3000, batch_size=bs, validation_split=0.2, callbacks=[es])
+    hist = model.fit(X_train, y_train, epochs=20000, batch_size=bs, validation_split=0.2, callbacks=[es])
     
     results = model.evaluate(X_test, y_test)
     acc = results[1]
@@ -141,36 +159,25 @@ def auto() :
     # print(pd.value_counts(y_predict))
     # print(pd.value_counts(y_submit))
     submission_csv['대출등급'] = y_submit
-    f1 = f1_score(y_test, y_predict, average='macro')
+    f1 = f1_score(y_test, y_predict, average='weighted')
     # submission_csv.to_csv(path + "0115_" + str(rs) + "_bs_" + str(bs) + "f1_" + str(round(f1, 3)) + ".csv", index=False)
     return f1, rs, bs, hist
 
 
-# f1, rs, bs = auto()
+# f1, rs, bs , hist = auto()
 # print("f1 : " , f1)
 
-max_f1 = 0.6
+max_f1 = 0.85
 
 while True:
-    f1, rs, bs, hist = auto()
+    f1, rs, bs, hist = auto(test_csv)
     if f1 > max_f1 :
         max_f1 = f1
-        submission_csv.to_csv(path + "0115_ov6_" + str(rs) + "_bs_" + str(bs) + "f1_" + str(f1) + ".csv", index=False)
-print(f1)
-
-f1, rs, bs, hist = auto()
+        submission_csv.to_csv(path + "0116_ov85_1_" + str(rs) + "_bs_" + str(bs) + "f1_" + str(f1) + ".csv", index=False)
+# print(f1)
 
 
 
-# import matplotlib.pyplot as plt
-# # plt.rcParams['font.family'] = 'Malgun Gothic'   #한글 깨짐 해결
-# plt.figure(figsize=(9,6))
-# plt.plot(hist.history['loss'], c='red', label='loss', marker='.')
-# plt.plot(hist.history['val_loss'], c='blue', label='val_loss', marker='.')
-# plt.legend(loc='upper right')
-# plt.title('grade')
-# plt.xlabel('epoch')
-# plt.ylabel('loss')
-# plt.grid()  
-# plt.show()
+
+
     
