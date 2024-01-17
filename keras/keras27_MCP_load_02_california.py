@@ -21,7 +21,7 @@ x_test = scaler.transform(x_test)
 #2
 
 #3.
-model = load_model('..\\_data\_save\\MCP\\keras26_california.hdf5')
+model = load_model('..\\_data\_save\\MCP\\california\\california0117_1459_0079-0.5094.hdf5')
 
 #4.
 loss = model.evaluate(x_test, y_test)
@@ -32,5 +32,5 @@ r2 = r2_score(y_test, y_predict)
 print("R2 score : ", r2)
 print("loss : " , loss)
 
-# R2 score :  0.5729723632802447
-# loss :  [0.5123502016067505, 0.0017761989729478955]
+# R2 score :  0.5728472663852988
+# loss :  [0.5130610466003418, 0.0017761989729478955]

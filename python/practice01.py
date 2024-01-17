@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 import random
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler
 
 path = "C:\\_data\\dacon\\loan_grade\\"
 
@@ -121,27 +121,28 @@ y = OneHotEncoder(sparse=False).fit_transform(y)
 model = Sequential()
 model.add(Dense(19, activation='relu', input_shape=(13,)))
 model.add(Dense(97,activation='relu' ))
-model.add(Dense(9,activation='relu' ))
-model.add(Dense(21,activation='relu' ))
-model.add(Dense(16,activation='relu' ))
-model.add(Dense(21, activation='relu'))
+model.add(Dense(3,activation='relu' ))
+model.add(Dense(12,activation='relu' ))
+model.add(Dense(15,activation='relu' ))
+model.add(Dense(28, activation='relu'))
 model.add(Dense(7, activation='softmax'))
 
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='val_accuracy'
                    , mode='max'
-                   , patience=850
+                   , patience=800
                    , verbose=1
                    , restore_best_weights=True
                    )
 
-mms = MinMaxScaler()
+mms = RobustScaler()
 sds = StandardScaler()
+
 
 def auto(test_csv) :
     rs = random.randrange(2, 99999999)
     # bs = random.randrange(5000, 11999)
-    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.91, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.82, stratify=y)
     
     #---mms
     mms.fit(X_train)
@@ -149,10 +150,10 @@ def auto(test_csv) :
     X_test = mms.transform(X_test)
     test_csv = mms.transform(test_csv)
 
-    mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath='..\\_data\\_save\\MCP\\keras26_loan_2.hdf5')
+    mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath='..\\_data\\_save\\MCP\\dacon_loan_robust.hdf5')
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    hist = model.fit(X_train, y_train, epochs=50000, batch_size=1000, validation_split=0.17, callbacks=[es, mcp])
+    hist = model.fit(X_train, y_train, epochs=50000, batch_size=1000, validation_split=0.13, callbacks=[es, mcp])
     
 
 
@@ -186,12 +187,15 @@ def auto(test_csv) :
 # f1, rs, bs , hist = auto()
 # print("f1 : " , f1)
 
-max_f1 = 0.941
+max_f1 = 0.91
 
 while True:
     f1, rs, hist = auto(test_csv)
     if f1 > max_f1 :
         max_f1 = f1
-        submission_csv.to_csv(path + "0117_941_mac_" + str(rs) + "_f1_" + str(f1) + ".csv", index=False)
-        break
+        submission_csv.to_csv(path + "0117_935robus_" + str(rs) + "_f1_" + str(f1) + ".csv", index=False)
+        
+        if f1 >= 0.95:
+            break
+            
 # print(f1)

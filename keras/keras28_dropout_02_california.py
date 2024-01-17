@@ -1,6 +1,6 @@
 from sklearn.datasets import fetch_california_housing
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import MinMaxScaler
@@ -22,9 +22,11 @@ x_test = scaler.transform(x_test)
 #2.
 model = Sequential()
 model.add(Dense(8,input_dim=8))
+model.add(Dropout(0.2))
 model.add(Dense(16))
 model.add(Dense(32))
 model.add(Dense(8))
+model.add(Dropout(0.3))
 model.add(Dense(4))
 model.add(Dense(1))
 
@@ -60,6 +62,3 @@ results = model.predict(x)
 r2 = r2_score(y_test, y_predict)
 print("R2 score : ", r2)
 print("loss : " , loss)
-
-# R2 score :  0.5728472663852988
-# loss :  [0.5130610466003418, 0.0017761989729478955]
