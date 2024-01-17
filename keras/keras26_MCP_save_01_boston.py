@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 import numpy as np
 from keras.callbacks import EarlyStopping, ModelCheckpoint
+import datetime
 
 datasets = load_boston()
 
@@ -30,6 +31,12 @@ model.add(Dense(8))
 model.add(Dense(4))
 model.add(Dense(1))
 
+date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
+path = '..\\_data\_save\\MCP\\boston\\'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
+filepath = ''.join([path, 'boston_', date, '_' ,filename])
+
+
 
 #.컴파일, 훈련
 
@@ -37,9 +44,10 @@ es = EarlyStopping(monitor='val_loss'
                    , mode='min'
                    , patience=100
                    , verbose=1
+                   , restore_best_weights=True
                    )
 
-mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath='..\\_data\\_save\\MCP\\keras26_boston.hdf5')
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath=filepath)
 
 model.compile(loss='mae', optimizer='adam')
 model.fit(x_train, y_train, epochs=1000, batch_size=80, validation_split=0.2, callbacks=[es, mcp])
@@ -54,5 +62,7 @@ r2 = r2_score(y_test, y_predict)
 print("R2 score : ", r2)
 print("loss : " , loss)
 
-# R2 score :  0.7160118877534997
-# loss :  3.143805980682373
+# R2 score :  0.7087847879357653
+# R2 score :  0.7087847879357653
+# loss :  3.243027925491333
+# loss :  3.243027925491333

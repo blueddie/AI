@@ -33,7 +33,7 @@ x_test = scaler.transform(x_test)
 # model.compile(loss='mae', optimizer='adam')
 # hist = model.fit(x_train, y_train, epochs=1000, batch_size=32, validation_split=0.2, callbacks=[es, mcp])
 
-model = load_model('..\\_data\_save\\MCP\\keras26_boston.hdf5')
+model = load_model('..\\_data\_save\\MCP\\boston\\boston_0117_1442_0809-2.8332.hdf5')
 
 # #4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
@@ -48,5 +48,5 @@ print("loss : " , loss)
 print("=========================================")
 # print(hist.history['val_loss'])
 
-# R2 score :  0.7155016783790795
-# loss :  3.2195658683776855
+# R2 score :  0.7087847879357653
+# loss :  3.243027925491333
