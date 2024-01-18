@@ -5,7 +5,7 @@ from keras.models import Sequential
 from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error, accuracy_score
-
+import datetime
 
 #1. 데이터
 datasets = load_breast_cancer()
@@ -36,7 +36,14 @@ es = EarlyStopping(monitor='val_loss'
                    , restore_best_weights=True
                    )
 
-mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath='..\\_data\\_save\\MCP\\keras26_cancer.hdf5')
+
+date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
+path = '..\\_data\_save\\MCP\\cancer\\'
+filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
+filepath = ''.join([path, 'cancer_', date, '_' ,filename])
+
+
+mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath=filepath)
 
 #3.
 model.compile(loss='binary_crossentropy', optimizer='adam'

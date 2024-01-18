@@ -16,7 +16,7 @@ import time
 # pip uninstall scikit-learn-intelex
 # pip uninstall scikit-image
 
-# pip install scikit-learn==0.23.2  => 0.23.2 버전 설치
+# pip install scikit-learn==1.1.3  => 1.1.3 버전 설치
 datasets = load_boston()
 # print(datasets)
 # x = datasets.data

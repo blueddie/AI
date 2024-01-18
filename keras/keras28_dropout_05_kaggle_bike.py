@@ -81,23 +81,3 @@ print('rmsle : ' , rmsle)
 print('loss : ' , loss)
 
 submission_csv.to_csv(csv_path + date + str(round(rmsle, 5)) +".csv", index=False)
-
-
-# rmsle :  1.548550820622674
-# loss :  31638.96484375
-
-
-# min_rmsle = 1.3
-# min_loss = 999999
-# date = "0111_3_"
-# extension_name = ".csv"
-
-# # rmsle, rs, bs, loss, hist = auto()
-# while True :
-#     rmsle, rs, bs, loss = auto(test_csv)
-    
-#     if rmsle < min_rmsle and loss < min_loss:
-        
-#         min_loss = loss
-#         min_rmsle = rmsle
-#         submission_csv.to_csv(path + date + str(rs) +"and"+ str(bs) + "and"+ str(rmsle) + extension_name, index=False)

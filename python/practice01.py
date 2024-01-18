@@ -130,7 +130,7 @@ model.add(Dense(7, activation='softmax'))
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='val_accuracy'
                    , mode='max'
-                   , patience=800
+                   , patience=900
                    , verbose=1
                    , restore_best_weights=True
                    )
@@ -142,7 +142,7 @@ sds = StandardScaler()
 def auto(test_csv) :
     rs = random.randrange(2, 99999999)
     # bs = random.randrange(5000, 11999)
-    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.82, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.75, stratify=y)
     
     #---mms
     mms.fit(X_train)
@@ -150,10 +150,10 @@ def auto(test_csv) :
     X_test = mms.transform(X_test)
     test_csv = mms.transform(test_csv)
 
-    mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath='..\\_data\\_save\\MCP\\dacon_loan_robust.hdf5')
+    mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath='..\\_data\\_save\\MCP\\dacon_loan_robust96.hdf5')
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    hist = model.fit(X_train, y_train, epochs=50000, batch_size=1000, validation_split=0.13, callbacks=[es, mcp])
+    hist = model.fit(X_train, y_train, epochs=40000, batch_size=500, validation_split=0.12, callbacks=[es, mcp])
     
 
 
@@ -193,9 +193,9 @@ while True:
     f1, rs, hist = auto(test_csv)
     if f1 > max_f1 :
         max_f1 = f1
-        submission_csv.to_csv(path + "0117_935robus_" + str(rs) + "_f1_" + str(f1) + ".csv", index=False)
+        submission_csv.to_csv(path + "0117_96robus_max" + str(rs) + "_f1_" + str(f1) + ".csv", index=False)
         
-        if f1 >= 0.95:
+        if f1 >= 0.96:
             break
             
 # print(f1)
