@@ -10,7 +10,7 @@ import random
 from sklearn.preprocessing import MinMaxScaler
 import datetime, time
 
-csv_path = "C:\\_data\dacon\\loan_grade\\"
+csv_path = "C:\\_data\\dacon\\loan_grade\\"
 
 train_csv = pd.read_csv(csv_path + "train.csv", index_col=0)
 test_csv = pd.read_csv(csv_path + "test.csv", index_col=0)
@@ -90,7 +90,7 @@ model = Model(inputs=input1, outputs=output1)
 
 
 date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
-path = '..\\_data\_save\\MCP\\loan\\'
+path = '..\\_data\_save\\MCP\\dacon_loan\\'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
 filepath = ''.join([path, 'loan_', date, '_' ,filename])
 
