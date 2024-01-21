@@ -1,52 +1,36 @@
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout, BatchNormalization
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
-import random
+import random, datetime
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler
 
-path = "C:\\_data\\dacon\\loan_grade\\"
+csv_path = "C:\\_data\\dacon\\loan_grade\\"
 
-train_csv = pd.read_csv(path + "train.csv", index_col=0)
-test_csv = pd.read_csv(path + "test.csv", index_col=0)
-submission_csv = pd.read_csv(path + "sample_submission.csv")
+train_csv = pd.read_csv(csv_path + "train.csv", index_col=0)
+test_csv = pd.read_csv(csv_path + "test.csv", index_col=0)
+submission_csv = pd.read_csv(csv_path + "sample_submission.csv")
 
 encoder = LabelEncoder()
 
 encoder.fit(train_csv['주택소유상태'])
-
-# print(pd.value_counts(train_csv['주택소유상태']))
-# print('인코당 클래스: ', encoder.classes_)  # ['ANY' 'MORTGAGE' 'OWN' 'RENT']
-
-# print(pd.value_counts(test_csv['주택소유상태']))
-# print('인코당 클래스: ', encoder.classes_)  # ['MORTGAGE' 'OWN' 'RENT']
-
 idx_any = train_csv[train_csv['주택소유상태'] == 'ANY'].index
 train_csv = train_csv.drop(idx_any) # ANY가 있는 행 제거
 
 train_csv['주택소유상태'] = encoder.transform(train_csv['주택소유상태'])
 test_csv['주택소유상태'] = encoder.transform(test_csv['주택소유상태'])
 
-
 train_csv['대출목적'] = train_csv['대출목적'].str.replace(' ' , '')
 test_csv['대출목적'] = test_csv['대출목적'].str.replace(' ' , '')
 
 encoder.fit(train_csv['대출목적'])
 train_csv['대출목적'] = encoder.transform(train_csv['대출목적'])
-
-# f['B'].str.replace('데이터,', '소프트웨어')
 test_csv['대출목적'] = test_csv['대출목적'].str.replace('결혼', '부채통합')
-
 test_csv['대출목적'] = encoder.transform(test_csv['대출목적'])
-# print(pd.value_counts(test_csv['대출목적']))
-
-# print('인코당 클래스: ', encoder.classes_)  #인코당 클래스:  ['기타' '부채통합' '소규모사업' '신용카드' '의료' '이사' '자동차' '재생에너지' '주요구매' '주택' '주택개선' '휴가']
-
-# df['A'].str.slice(1, 5)
  
 train_str = train_csv['대출기간'].str.slice(0, 3)
 test_str = test_csv['대출기간'].str.slice(0, 3)
@@ -66,83 +50,53 @@ test_csv['근로기간'] = test_csv['근로기간'].str.strip()
 train_csv['근로기간'] = train_csv['근로기간'].replace({'<' : 0, '1' : 1, '2' : 2, '3' : 3, '4' : 4, '5' : 5, '6' : 6, '7' : 7, '8' : 8, '9' : 9, '10' : 10, '<1' : 0, 'Un' : 11})
 test_csv['근로기간'] = test_csv['근로기간'].replace({'<' : 0, '1' : 1, '2' : 2, '3' : 3, '4' : 4, '5' : 5, '6' : 6, '7' : 7, '8' : 8, '9' : 9, '10' : 10, '<1' : 0, 'Un' : 11})
 
-
-
-# encoder.fit(train_csv['대출금액'])
-# train_csv['대출금액'] = encoder.transform(train_csv['대출금액'])
-# test_csv['대출금액'] = encoder.transform(test_csv['대출금액'])
-# print(train_csv['대출금액'])
-
-
-# print(pd.value_counts(train_csv['대출금액']))
-
-
-# print(pd.value_counts(test_csv['근로기간']))
-
-# print(pd.value_counts(test_csv['근로기간']))
-
-
-
 encoder.fit(train_csv['대출등급'])
-
 X = train_csv.drop(['대출등급'], axis=1)
-
 y = train_csv['대출등급']
 
-# y = pd.get_dummies(y, dtype='int')
-# # print(y.shape)  #(96293, 7)
-# print(y)  #(96293, 7)
-# # print(y.idxmax(axis=1))
+#------------
 
-# ------ mms
-# mms = MinMaxScaler()
-# mms.fit(X)
-# X = mms.transform(X)
-# test_csv = mms.transform(test_csv)
+
+
+
 
 #-------- sklearn
 y = y.values.reshape(-1, 1)
 y = OneHotEncoder(sparse=False).fit_transform(y)
 
 
-# print(y.shape)
-# ohe = OneHotEncoder(sparse=True)
-# y = ohe.fit_transform(y).toarray() 
-
-
-
-# print(y.shape)  #(96294, 7)
-# print(X)
-# print(y)
-
-# ------------
-
-#2
 model = Sequential()
 model.add(Dense(19, activation='relu', input_shape=(13,)))
-model.add(Dense(97,activation='relu' ))
-model.add(Dense(3,activation='relu' ))
-model.add(Dense(12,activation='relu' ))
-model.add(Dense(15,activation='relu' ))
-model.add(Dense(28, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dense(97, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dense(9, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dense(21, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dense(16, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dense(21, activation='relu'))
+model.add(BatchNormalization())
 model.add(Dense(7, activation='softmax'))
+
+
+
 
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 es = EarlyStopping(monitor='val_accuracy'
                    , mode='max'
-                   , patience=900
-                   , verbose=1
+                   , patience=1000
+                   , verbose=0
                    , restore_best_weights=True
                    )
 
-mms = RobustScaler()
-sds = StandardScaler()
-
+mms = MinMaxScaler()
 
 def auto(test_csv) :
     rs = random.randrange(2, 99999999)
     # bs = random.randrange(5000, 11999)
-    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.75, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.9, stratify=y)
     
     #---mms
     mms.fit(X_train)
@@ -150,10 +104,10 @@ def auto(test_csv) :
     X_test = mms.transform(X_test)
     test_csv = mms.transform(test_csv)
 
-    mcp = ModelCheckpoint(monitor='val_loss', mode='auto', verbose=1, save_best_only=True, filepath='..\\_data\\_save\\MCP\\dacon_loan_robust96.hdf5')
+    mcp = ModelCheckpoint(monitor='val_accuracy', mode='auto', verbose=0, save_best_only=True, filepath=filepath)
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    hist = model.fit(X_train, y_train, epochs=40000, batch_size=500, validation_split=0.12, callbacks=[es, mcp])
+    hist = model.fit(X_train, y_train, epochs=20000, batch_size=600, validation_split=0.15, callbacks=[es, mcp])
     
 
 
@@ -181,21 +135,27 @@ def auto(test_csv) :
     submission_csv['대출등급'] = y_submit
     f1 = f1_score(y_test, y_predict, average='macro')
     # submission_csv.to_csv(path + "0115_" + str(rs) + "_bs_" + str(bs) + "f1_" + str(round(f1, 3)) + ".csv", index=False)
-    return f1, rs, hist
+    return f1, rs
 
 
 # f1, rs, bs , hist = auto()
 # print("f1 : " , f1)
 
-max_f1 = 0.91
+max_f1 = 0.7
 
 while True:
-    f1, rs, hist = auto(test_csv)
+    
+    date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
+    path = '..\\_data\_save\\MCP\\dacon_loan\\'
+    filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
+    filepath = ''.join([path, 'loan_test', date, '_' ,filename])
+    
+    f1, rs = auto(test_csv)
     if f1 > max_f1 :
         max_f1 = f1
-        submission_csv.to_csv(path + "0117_96robus_max" + str(rs) + "_f1_" + str(f1) + ".csv", index=False)
+        submission_csv.to_csv(csv_path + date + str(rs) + "_f1_" + str(f1) + ".csv", index=False)
         
-        if f1 >= 0.96:
+        if f1 > 0.93:
             break
             
 # print(f1)
