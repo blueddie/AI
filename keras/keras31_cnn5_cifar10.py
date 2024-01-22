@@ -40,6 +40,7 @@ print(X_train.shape)
 print(X_test.shape)
 
 
+
 y_train = OneHotEncoder(sparse=False).fit_transform(y_train)
 y_test = OneHotEncoder(sparse=False).fit_transform(y_test)
 
@@ -49,22 +50,23 @@ y_test = OneHotEncoder(sparse=False).fit_transform(y_test)
 
 #-----
 model = Sequential()
-model.add(Conv2D(97, (2,2), activation='relu', input_shape=(32, 32, 3)))
+model.add(Conv2D(97, (3,3), activation='swish', input_shape=(32, 32, 3)))
 model.add(Dropout(0.5))
-model.add(Conv2D(160, (2,2), activation='relu'))
+model.add(Conv2D(160, (3,3), activation='swish'))
 model.add(Dropout(0.5))
-model.add(Conv2D(50, (3,3), activation='relu'))
-model.add(GlobalAveragePooling2D())
-model.add(Dense(50, activation='relu'))
+model.add(Conv2D(120, (3,3), activation='swish'))
+model.add(GlobalMaxPooling2D())
+model.add(Dense(50, activation='swish'))
+model.add(Dense(30, activation='swish'))
 model.add(Dense(10, activation='softmax'))
 
-es = EarlyStopping(monitor='val_loss', mode='auto', patience=30, verbose=0, restore_best_weights=True)
+es = EarlyStopping(monitor='val_accuracy', mode='auto', patience=20, verbose=0, restore_best_weights=True)
 #3.  컴파일, 훈련
-model.compile(loss='categorical_crossentropy', optimizer='adam' , metrics=['acc'])
+model.compile(loss='categorical_crossentropy', optimizer='adam' , metrics=['accuracy'])
 
 import time
 st = time.time()
-model.fit(X_train, y_train, batch_size=500, verbose=1, epochs=1000, validation_split=0.2, callbacks=[es, mcp])
+model.fit(X_train, y_train, batch_size=64, verbose=1, epochs=110, validation_split=0.2, callbacks=[es, mcp])
 et = time.time()
 
 #4. 평가, 예측
@@ -103,3 +105,6 @@ print("걸린 시간 : ", et - st)
 # acc :  0.763700008392334
 # 걸린 시간 :  1126.4281957149506
 
+# loss :  0.7258102297782898
+# acc :  0.7649999856948853
+# 걸린 시간 :  575.1396014690399

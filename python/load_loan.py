@@ -126,8 +126,9 @@ print(y.shape)
 
 #--------------
 while True :
+    ts = 0.85
     rs = random.randrange(2,99999999)
-    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.88, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=1689, train_size=ts, stratify=y)
 
     X_train =np.asarray(X_train).astype(np.float32) 
     X_test =np.asarray(X_test).astype(np.float32)
@@ -162,15 +163,21 @@ while True :
 
     print("acc : " , acc)
     print('f1 : ', f1)
+    print(rs)
 
     date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
     path = '..\\_data\_save\\MCP\\dacon_loan\\'
     filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
     filepath = ''.join([path, 'loan_test', date, '_' ,filename])
 
-    if f1 > 0.94 :
-        submission_csv.to_csv(csv_path + date + "_f1_" + str(f1) + ".csv", index=False)     
-        print(rs)
+    if f1 > 0.92 :
+        print("ts :" , ts)
+        # submission_csv.to_csv(csv_path + date + "_f1_" + str(f1) + ".csv", index=False)     
+        break
+    ts = ts - 0.01
+    
+    if ts == 0.7 :
+        print("ts XXXXXXXXXXXXXXXXXXXXXX")
         break
     
     
