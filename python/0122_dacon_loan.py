@@ -138,12 +138,12 @@ y = ohe.transform(y)
 # print(y)
 
 
-max_f1 = 0.9
+max_f1 = 0.85
 #--------------
 while True:
     rs = random.randrange(2, 99999999)
     bs = random.randrange(512, 2049)
-    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.92, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.9, stratify=y)
 
     model = Sequential()
     model.add(Dense(32, activation='swish', input_shape=(11,)))
