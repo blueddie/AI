@@ -39,14 +39,14 @@ X['hour_bef_visibility'] = X['hour_bef_visibility'].fillna(X['hour_bef_visibilit
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=1226)
 
 #2. 순차적
-model = Sequential()
-model.add(Dense(8, input_dim=9, activation='relu'))
-model.add(Dense(16))
-model.add(Dropout(0.2))
-model.add(Dense(32))
-model.add(Dense(8))
-model.add(Dense(4))
-model.add(Dense(1))
+# model = Sequential()
+# model.add(Dense(8, input_dim=9, activation='relu'))
+# model.add(Dense(16))
+# model.add(Dropout(0.2))
+# model.add(Dense(32))
+# model.add(Dense(8))
+# model.add(Dense(4))
+# model.add(Dense(1))
 
 #2 함수형
 input1 = Input(shape=(9,))

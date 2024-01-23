@@ -42,27 +42,18 @@ ohe.fit(y_train)
 y_train = ohe.transform(y_train)
 y_test = ohe.transform(y_test)
 
-
-# model = Sequential()
-# model.add(Conv2D(64, (3,3), activation='relu', input_shape=(28, 28, 1)))
-# model.add(Conv2D(128, (3,3), activation='swish'))
-# model.add(Conv2D(57, (3,3), activation='swish'))
-# model.add(Conv2D(31, (3,3), activation='relu'))
-# model.add(Conv2D(15, (3,3), activation='swish'))
-# model.add(Conv2D(17, (3,3), activation='relu'))
-# model.add(GlobalMaxPooling2D())
-# model.add(Dense(63, activation='swish'))
-# model.add(Dense(10, activation='softmax'))
+#2
 model = Sequential()
 model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
-model.add(MaxPooling2D((2, 2)))
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D((2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(124, (3, 3), activation='relu', padding='same'))
+model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
 model.add(Flatten())
 # model.add(GlobalMaxPooling2D())
 model.add(Dense(128, activation='relu'))
 model.add(Dense(10, activation='softmax'))
 
+#3
 es = EarlyStopping(monitor='val_accuracy', mode='auto', patience=30, verbose=0, restore_best_weights=True)
 model.compile(loss='categorical_crossentropy', optimizer='adam' , metrics=['accuracy'])
 
@@ -81,3 +72,8 @@ print("걸린 시간 : ", et - st)
 # loss :  0.26375335454940796
 # acc :  0.909600019454956
 # 걸린 시간 :  210.31135821342468
+
+# loss :  0.301427960395813
+# acc :  0.9118000268936157
+# 걸린 시간 :  209.55736780166626
+# PS C:\Study> 

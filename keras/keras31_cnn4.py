@@ -6,29 +6,30 @@ from keras.layers import Dense, Conv2D, Flatten
 from sklearn.preprocessing import OneHotEncoder
 
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
-print(X_train.shape, y_train.shape) #(60000, 28, 28) (60000,)
-print(X_test.shape, y_test.shape)   #(10000, 28, 28) (10000,)
+# print(X_train.shape, y_train.shape) #(60000, 28, 28) (60000,)
+# print(X_test.shape, y_test.shape)   #(10000, 28, 28) (10000,)
 
 # X_train = X_train.reshape(60000, 28, 28, 1)
 # X_test = X_test.reshape(10000, 28, 28, 1)
 
 #-------
-X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
+# X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)
+# X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
 
 # print(X_test.shape)
 
-print(y_train.shape)
+print(X_train.shape)
 # print(y_test.shape)
 y_train = y_train.reshape(-1, 1)
 y_test = y_test.reshape(-1, 1)
 
-print(np.unique(y_train, return_counts=True))
+# print(np.unique(y_train, return_counts=True))
 
 
-
-
-y_train = OneHotEncoder(sparse=False).fit_transform(y_train)
-y_test = OneHotEncoder(sparse=False).fit_transform(y_test)
+ohe = OneHotEncoder(sparse=False)
+ohe.fit(y_train)
+y_train = ohe.transform(y_train)
+y_test = ohe.transform(y_test)
 
 # print(y_train.shape)
 #2
@@ -52,13 +53,13 @@ model.summary()
 
 
 
-'''
-(kernal_size * kernal_size * chanels + bias) * filters 
-1번째 레이어 : (2 * 2 * 1 + 1) * 9 = 45
-2번째 레이어 : (3 * 3 * 9 + 1) * 10 = 820
-3번쨰 레이어 : (4* 4 * 10 + 1) * 15 = 2415
-Flattten 레이어 : reshape만 할 뿐 연산은 0
-'''
+
+# (kernal_size * kernal_size * chanels + bias) * filters 
+# 1번째 레이어 : (2 * 2 * 1 + 1) * 9 = 45
+# 2번째 레이어 : (3 * 3 * 9 + 1) * 10 = 820
+# 3번쨰 레이어 : (4* 4 * 10 + 1) * 15 = 2415
+# Flattten 레이어 : reshape만 할 뿐 연산은 0
+
 from keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='val_loss', mode='auto', patience=30, verbose=1, restore_best_weights=True)
 #3.  컴파일, 훈련
@@ -66,7 +67,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam' , metrics=['acc'
 
 import time
 st = time.time()
-model.fit(X_train, y_train, batch_size=1000, verbose=1, epochs=10000, validation_split=0.2, callbacks=[es])
+model.fit(X_train, y_train, batch_size=1000, verbose=1, epochs=10, validation_split=0.2, callbacks=[es])
 et = time.time()
 
 #4. 평가, 예측
