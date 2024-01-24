@@ -111,7 +111,7 @@ test_csv['대출목적'] = test_csv['대출목적'].replace({'부채 통합' : 0
 
 
 
-columns_to_drop = ['대출등급', '연체계좌수','총연체금액']
+columns_to_drop = ['대출등급']
 X = train_csv.drop(columns=columns_to_drop)
 y = train_csv['대출등급']   #(96294,)
 
@@ -125,8 +125,8 @@ y = encoder.transform(y)
 
 
 
-test_drop = ['연체계좌수', '총연체금액']
-test_csv = test_csv.drop(columns=test_drop)
+
+
 
 
 y = y.reshape(-1, 1)
@@ -138,27 +138,28 @@ y = ohe.transform(y)
 # print(y)
 
 
-max_f1 = 0.85
+max_f1 = 0.91
 #--------------
 while True:
     rs = random.randrange(2, 99999999)
-    bs = random.randrange(512, 2049)
-    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.9, stratify=y)
+    bs = random.randrange(1024, 2049)
+    X_train, X_test, y_train, y_test = train_test_split(X, y ,random_state=rs, train_size=0.92, stratify=y)
 
     model = Sequential()
-    model.add(Dense(32, activation='swish', input_shape=(11,)))
-    model.add(Dense(16, activation='swish'))
-    model.add(Dense(8, activation='swish'))
+    model.add(Dense(19, activation='swish', input_shape=(13,)))
+    model.add(Dense(97, activation='swish'))
+    model.add(BatchNormalization())
+    model.add(Dense(9, activation='swish'))
+    model.add(Dense(21, activation='swish'))
     model.add(Dense(16, activation='swish'))
     model.add(Dense(21, activation='swish'))
-    model.add(Dense(34, activation='swish'))
     model.add(Dense(7, activation='softmax'))
 
     from keras.callbacks import EarlyStopping, ModelCheckpoint
-    es = EarlyStopping(monitor='val_accuracy'
-                    , mode='max'
-                    , patience=500
-                    , verbose=1
+    es = EarlyStopping(monitor='val_loss'
+                    , mode='min'
+                    , patience=700
+                    , verbose=0
                     , restore_best_weights=True
                     )
 
@@ -184,7 +185,7 @@ while True:
     # #3
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-    hist = model.fit(X_train, y_train, epochs=12000, batch_size=bs, validation_split=0.24, callbacks=[es])
+    hist = model.fit(X_train, y_train, epochs=40000, batch_size=bs, validation_split=0.25, callbacks=[es])
 
     # model.save('C:\\_data\\_save\\MCP\\dacon_loan\\best.hdf5')
     #4
@@ -194,11 +195,11 @@ while True:
 
 
     y_predict = model.predict(X_test)   
-    y_predict = np.argmax(y_predict, axis=1)
-    y_predict = encoder.inverse_transform(y_predict)
-    
-    y_test = np.argmax(y_test, axis=1)
-    y_test = encoder.inverse_transform(y_test)
+    # y_predict = np.argmax(y_predict, axis=1)
+    y_predict = ohe.inverse_transform(y_predict)
+    # print(y_predict)
+    # y_test = np.argmax(y_test, axis=1)
+    y_test = ohe.inverse_transform(y_test)
     
     # f1 = f1_score(y_test, y_predict, average='macro')
     precision, recall, f1, _ = precision_recall_fscore_support(y_test, y_predict, average='macro')
@@ -207,22 +208,22 @@ while True:
     y_submit = np.argmax(y_submit, axis=1)
     y_submit = encoder.inverse_transform(y_submit)
 
-    submission_csv['대출등급'] = y_submit
+    submission_csv['대출등급'] = pd.DataFrame(y_submit.reshape(-1,1))
 
 
     
 
     if f1 > max_f1 :
-        max_f1 = f1
+        # max_f1 = f1
         print("acc : " , acc)
         print('f1 : ', f1)
         print('rs : ' , rs)
         print('bs : ' , bs)
         # file_f1 = str(round(f1, 4))
-        model.save('C:\\_data\\_save\\MCP\\dacon_loan\\0123\\best_1_dnn.hdf5')
+        model.save('C:\\_data\\_save\\MCP\\dacon_loan\\0123\\'+ date +'best_1_dnn.hdf5')
         submission_csv.to_csv(csv_path + date + '_rs_' + str(rs) + '_bs_' + str(bs) +  "_f1_" + str(f1) + ".csv", index=False)
 
-        if max_f1 >= 0.933 :
+        if f1 >= 0.943 :
 
             break
 
