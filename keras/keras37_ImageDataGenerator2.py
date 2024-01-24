@@ -56,7 +56,7 @@ print(Xy_train[0][0].shape) #(160, 200, 200, 3) X_train
 # print(Xy_test[0][1].shape) #(160,)              y_test
 
 
-'''
+
 X_train = Xy_train[0][0]
 y_train = Xy_train[0][1]
 
@@ -68,8 +68,6 @@ y_test = Xy_test[0][1]
 # print(y_test.shape)
 # print(y_train)
 
-y_train = y_train.reshape(-1, 1)
-y_test = y_test.reshape(-1, 1)
 
 model = Sequential()
 model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)))
@@ -119,4 +117,3 @@ model.save('C:\\_data\\_save\\MCP\\brain\\'+ file_acc +'_cnn.hdf5')
 # acc :  0.8333333134651184
 
 
-'''

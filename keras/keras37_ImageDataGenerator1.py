@@ -27,6 +27,7 @@ Xy_train = train_datagen.flow_from_directory(
     , target_size=(200,200)
     , batch_size=160    # 160 이상을 쓰면 X 통으로 가져올 수 있다. batch_size = len(Xy_train)
     , class_mode='binary'
+    , color_mode='grayscale'
     , shuffle='True'
     # Found 160 images belonging to 2 classes.
 )
@@ -49,7 +50,7 @@ print(Xy_train[0])
 print(Xy_train[0][0]) # 첫번째 배치의 X 
 print(Xy_train[0][1]) # 첫번째 배치의 y
 
-print(Xy_train[0][0].shape) #(10, 200, 200, 3) 흑백도 칼라다(o) 칼라는 흑백이다 (X)
+print(Xy_train[0][0].shape) #(10, 200, 200, 1) 흑백도 칼라다(o) 칼라는 흑백이다 (X)
 
 print(type(Xy_train))       #<class 'keras.preprocessing.image.DirectoryIterator'>
 print(type(Xy_train[0]))    #<class 'tuple'>
