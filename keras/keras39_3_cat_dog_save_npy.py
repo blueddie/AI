@@ -43,7 +43,6 @@ for i in range(len(Xy_train)):
     X.append(images)
     y.append(labels)
 
-# all_images와 all_labels을 numpy 배열로 변환하면 하나의 데이터로 만들어진 것입니다.
 X = np.concatenate(X, axis=0)
 y = np.concatenate(y, axis=0)
 
@@ -60,7 +59,7 @@ print(submit.shape)
 # print(X.shape)  # (19997, 120, 120, 3)
 # print(y.shape)  # (19997,)
 
-# np_path = 'c:/_data/_save_npy/'
-# np.save(np_path + 'keras39_3_cat_dog_x_np.npy', arr=X)
-# np.save(np_path + 'keras39_3_cat_dog_y_np.npy', arr=y)
-# np.save(np_path + 'kaggle_cat_dog_submission_np.npy', arr=submit)
+np_path = 'c:\\_data\\_save_npy\\'
+np.save(np_path + 'keras39_3_cat_dog_x_np.npy', arr=X)
+np.save(np_path + 'keras39_3_cat_dog_y_np.npy', arr=y)
+np.save(np_path + 'kaggle_cat_dog_submission_np.npy', arr=submit)
