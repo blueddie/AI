@@ -64,6 +64,8 @@ submit = submit_datagen.flow_from_directory(
 )
 print('submit data ok')
 
+print('사진', submit)
+
 
 x = []
 y = []
