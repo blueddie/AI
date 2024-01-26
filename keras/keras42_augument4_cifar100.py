@@ -7,13 +7,17 @@ from sklearn.preprocessing import OneHotEncoder
 import datetime
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
+from sklearn.preprocessing import StandardScaler
+
 
 (x_train, y_train), (x_test, y_test) = cifar100.load_data()
 # print(x_train.shape, x_test.shape)     #(50000, 32, 32, 3) (10000, 32, 32, 3)
 # print(y_train.shape, y_test.shape)     #(50000, 1) (10000, 1)
 
-x_train = x_train / 255.
-x_test = x_test / 255.
+x_train / 255.
+x_test / 255.
+
+# print(x_train.shape, x_test.shape)
 
 train_datagen = ImageDataGenerator(
     # rescale=1./255
@@ -47,12 +51,14 @@ x_augumented = train_datagen.flow(
 x_train = np.concatenate((x_train, x_augumented))
 y_train = np.concatenate((y_train, y_augumented))
 
-print(x_train.shape, y_train.shape) #(80000, 32, 32, 3) (80000, 1)
+# print(x_train.shape, y_train.shape) #(80000, 32, 32, 3) (80000, 1)
 
 ohe = OneHotEncoder(sparse=False)
 ohe.fit(y_train)
 y_train = ohe.transform(y_train)
 y_test = ohe.transform(y_test)
+
+
 
 #2
 model = Sequential()
@@ -66,7 +72,7 @@ model.add(Dense(12, activation='swish'))
 # model.add(Dense(11, activation='swish'))
 model.add(Dense(56, activation='swish'))
 model.add(Dense(100, activation='softmax'))
-
+model.summary()
 
 #3
 es = EarlyStopping(monitor='val_accuracy', mode='auto', patience=10, verbose=0, restore_best_weights=True)

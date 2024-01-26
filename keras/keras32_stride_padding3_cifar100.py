@@ -20,17 +20,21 @@ filepath = ''.join([path, 'cifar_', date, '_' ,filename])
 # print(X_test.shape)    #(10000, 32, 32, 3)
 # print(y_test.shape)    #(10000, 1)
 
-X_train_flattened = X_train.reshape(X_train.shape[0], -1)
-# print(X_train_flattened.shape)
-X_test_flattened = X_test.reshape(X_test.shape[0], -1)
+# X_train_flattened = X_train.reshape(X_train.shape[0], -1)
+# # print(X_train_flattened.shape)
+# X_test_flattened = X_test.reshape(X_test.shape[0], -1)
 
-scaler = StandardScaler()
-scaler.fit(X_train_flattened)
-scaled_train = scaler.transform(X_train_flattened)
-scaled_test = scaler.transform(X_test_flattened)
+# scaler = StandardScaler()
+# scaler.fit(X_train_flattened)
+# scaled_train = scaler.transform(X_train_flattened)
+# scaled_test = scaler.transform(X_test_flattened)
 
-X_train = scaled_train.reshape(X_train.shape)
-X_test = scaled_test.reshape(X_test.shape)
+# X_train = scaled_train.reshape(X_train.shape)
+# X_test = scaled_test.reshape(X_test.shape)
+
+X_train / 255.
+X_test / 255.
+
 
 ohe = OneHotEncoder(sparse=False)
 ohe.fit(y_train)
