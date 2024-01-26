@@ -14,12 +14,12 @@ img = load_img(path
                  , target_size=(150,150)
                  
                  )
-print(img)
+# print(img)
 
-print(type(img))
+# print(type(img))
 
-plt.imshow(img)
-plt.show()
+# plt.imshow(img)
+# plt.show()
 
 arr = img_to_array(img)
 print(arr)
@@ -32,10 +32,14 @@ print(img.shape)    # (1, 281, 300, 3)
 
 ################################### 여기부터 증폭 #######################################
 
-datagen = ImageDataGenerator(
-    horizontal_flip=True
-    , vertical_flip=True 
-)
+datagen = ImageDataGenerator(horizontal_flip=True
+                             , vertical_flip=True
+                             , width_shift_range=0.2     # 10% 평행 이동하겠다 이동한만큼 0이 채워짐
+                             , height_shift_range=0.2    #
+                             , rotation_range=5          # 정해진 각도만큼 이미지를 회전
+                             , zoom_range=0.2            # 축소 또는 확대
+                             , shear_range=20           # 
+                             , fill_mode='nearest' )
 
 it = datagen.flow(img
                   , batch_size=1

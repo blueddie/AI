@@ -48,7 +48,7 @@ model.add(Conv2D(19, (3,3), activation='swish', padding='same' , input_shape=(32
 model.add(Conv2D(97, (3,3), activation='swish'))
 # model.add(MaxPool2D((2, 2)))
 model.add(Conv2D(143, (3,3), activation='swish' , padding='same'))
-model.add(GlobalAveragePooling2D())
+model.add(Flattenf())
 model.add(Dense(12, activation='swish'))
 # model.add(Dense(11, activation='swish'))
 model.add(Dense(56, activation='swish'))

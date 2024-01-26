@@ -54,28 +54,6 @@ for i in range(len(xy_train)) :
 x = np.concatenate(x, axis=0)
 y = np.concatenate(y, axis=0)
 
-# x2 = []
-# y2 = []
-
-# for i in range(len(xy_train2)) :
-#     images, labels = xy_train2.next()
-#     x2.append(images)
-#     y2.append(labels)
-    
-# x2 = np.concatenate(x2, axis=0)
-# y2 = np.concatenate(y2, axis=0)
-
-# x = np.concatenate([x, x2])
-# y = np.concatenate([y, y2])
-
-# 합치기 전
-# print(x.shape)  # (1027, 300, 300, 3)
-# print(x.shape)  # (1027, 300, 300, 3)
-
-# #합치기 후
-# print(x.shape)  # (2054, 300, 300, 3)
-# print(y.shape)  # (2054, 2)
-
 date = datetime.datetime.now().strftime("%m%d_%H%M")
 
 
