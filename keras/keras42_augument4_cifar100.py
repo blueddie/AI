@@ -69,6 +69,8 @@ model.add(Dense(100, activation='softmax'))
 
 
 #3
+es = EarlyStopping(monitor='val_accuracy', mode='auto', patience=10, verbose=0, restore_best_weights=True)
+
 model.compile(loss='categorical_crossentropy', optimizer='adam' , metrics=['accuracy'])
 import time
 st = time.time()
@@ -78,7 +80,7 @@ model.fit(x_train, y_train, batch_size=512, verbose=1, epochs=200, validation_sp
 et = time.time()
 
 #4
-results = model.evaluate(x_train, y_test)
+results = model.evaluate(x_test, y_test)
 print(results)
 print('loss : ' , results[0])
 print('acc : ' , results[1])
