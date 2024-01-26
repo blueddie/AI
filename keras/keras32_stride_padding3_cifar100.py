@@ -15,10 +15,10 @@ filepath = ''.join([path, 'cifar_', date, '_' ,filename])
 
 (X_train, y_train), (X_test, y_test) = cifar100.load_data()
 
-# print(X_train.shape)    #(50000, 32, 32, 3)
-# print(y_train.shape)    #((50000, 1)
-# print(X_test.shape)    #(10000, 32, 32, 3)
-# print(y_test.shape)    #(10000, 1)
+print(X_train.shape)    #(50000, 32, 32, 3)
+print(y_train.shape)    #((50000, 1)
+print(X_test.shape)    #(10000, 32, 32, 3)
+print(y_test.shape)    #(10000, 1)
 
 # X_train_flattened = X_train.reshape(X_train.shape[0], -1)
 # # print(X_train_flattened.shape)
