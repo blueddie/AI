@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 data = np.random.exponential(scale=2, size=90000)
 
 # 로그 변환 적용
-log_transformed_data = np.log1p(data)  # log1p 함수는 log(1 + x)를 계산
+log_transformed_data = np.log(data)  # log1p 함수는 log(1 + x)를 계산
 
 # 히스토그램 그리기
 plt.figure(figsize=(12, 6))

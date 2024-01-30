@@ -24,23 +24,34 @@ submission_csv = pd.read_csv(csv_path + "sample_submission.csv")
 encoder = LabelEncoder()
 ohe = OneHotEncoder()
 
-columns_to_drop = ['대출등급']
-x = train_csv.drop(columns=columns_to_drop)
-y = train_csv['대출등급']
+# columns_to_drop = ['대출등급']
+# x = train_csv.drop(columns=columns_to_drop)
+# y = train_csv['대출등급']
 
-# 대출 목적
-# encoder.fit(x['대출목적'])
-# x['대출목적'] = encoder.transform(x['대출목적'])
+xy = train_csv
 
-# log_transformed_x = np.log1p(x['대출목적'])
-# scaler = StandardScaler()
-# scaler.fit(x['대출목적'])
-# x['대출목적'] = scaler.transform(x['대출목적'])
+# unknown_replacement = xy['근로기간'].mode()[0]
+# xy.loc[xy['근로기간'] == 'Unknown', '근로기간'] = unknown_replacement
+# test_csv.loc[test_csv['근로기간'] == 'Unknown', '근로기간'] = unknown_replacement
+
+xy.loc[xy['근로기간'] == '<1 year', '근로기간'] = '< 1 year'
+xy.loc[xy['근로기간'] == '3', '근로기간'] = '3 years'
+xy.loc[xy['근로기간'] == '10+years', '근로기간'] = '10+ years'
+xy.loc[xy['근로기간'] == '1 years', '근로기간'] = '1 year'
+
+test_csv.loc[test_csv['근로기간'] == '<1 year', '근로기간'] = '< 1 year'
+test_csv.loc[test_csv['근로기간'] == '3', '근로기간'] = '3 years'
+test_csv.loc[test_csv['근로기간'] == '10+years', '근로기간'] = '10+ years'
+test_csv.loc[test_csv['근로기간'] == '1 years', '근로기간'] = '1 year'
+
+
+
+
 
 # 한글 폰트 설정
 plt.rcParams['font.family'] = 'Malgun Gothic' 
 plt.figure(figsize=(14, 10))
-sns.histplot(data=x, x='최근_2년간_연체_횟수', bins=30, kde=True)  # kde=True는 커널 밀도 추정을 함께 표시
+sns.histplot(data=xy, x='근로기간', bins=30, kde=True)  # kde=True는 커널 밀도 추정을 함께 표시
 plt.title('Histogram of 특정컬럼')
 plt.xlabel('특정컬럼 값')
 plt.ylabel('빈도')

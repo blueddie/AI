@@ -8,7 +8,7 @@ from keras.callbacks import EarlyStopping
 a = np.array(range(1, 101))
 
 x_predict = np.array(range(96,106))
-
+print(a)
 size = 5    # x 데이터는 4개 y 데이터는 1개
 # print(len(a))
 
@@ -21,9 +21,9 @@ def split_x(dataset, size):
     return np.array(aaa)
 
 
-
 xy = split_x(a, size)
-# print(xy)
+print(xy)
+
 # print('a : ' , a)
 # print('a shape : ', a.shape)
 
