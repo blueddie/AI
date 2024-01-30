@@ -29,10 +29,10 @@ x = train_csv.drop(columns=columns_to_drop)
 y = train_csv['대출등급']
 
 # 대출 목적
-encoder.fit(x['대출목적'])
-x['대출목적'] = encoder.transform(x['대출목적'])
+# encoder.fit(x['대출목적'])
+# x['대출목적'] = encoder.transform(x['대출목적'])
 
-log_transformed_x = np.log1p(x['대출목적'])
+# log_transformed_x = np.log1p(x['대출목적'])
 # scaler = StandardScaler()
 # scaler.fit(x['대출목적'])
 # x['대출목적'] = scaler.transform(x['대출목적'])
@@ -40,7 +40,7 @@ log_transformed_x = np.log1p(x['대출목적'])
 # 한글 폰트 설정
 plt.rcParams['font.family'] = 'Malgun Gothic' 
 plt.figure(figsize=(14, 10))
-sns.histplot(data=x, x='대출목적', bins=30, kde=True)  # kde=True는 커널 밀도 추정을 함께 표시
+sns.histplot(data=x, x='최근_2년간_연체_횟수', bins=30, kde=True)  # kde=True는 커널 밀도 추정을 함께 표시
 plt.title('Histogram of 특정컬럼')
 plt.xlabel('특정컬럼 값')
 plt.ylabel('빈도')
