@@ -28,7 +28,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=False, train_s
 
 #2
 model = Sequential()
-model.add(Bidirectional(LSTM(units=64), input_shape=(5, 14))) #timesteps, features
+model.add(Bidirectional(LSTM(units=64), input_shape=(6, 14))) #timesteps, features
 model.add(Dense(128,activation='relu'))
 model.add(Dense(77,activation='relu'))
 model.add(Dense(64,activation='relu'))
