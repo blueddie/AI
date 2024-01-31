@@ -20,7 +20,7 @@ train_csv[target_column_name] = moved_column_df
 
 print('변경 전',train_csv.shape)
 
-size = 6
+size = 18
 
 def split_x(dataset, size, column):
     x_arr = []
@@ -35,11 +35,11 @@ def split_x(dataset, size, column):
 
 x, y = split_x(train_csv, size, 13)
 
-# print('변경 후', x.shape)   #(420546, 6, 14)
+print('변경 후', x.shape)   #(420546, 6, 14)
 # print(type(x)) #<class 'numpy.ndarray'>
 
 print(y)
 
 np_path = 'c:\\_data\\_save_npy\\'
-np.save(np_path + 'kaggle_jena_x.npy', arr=x)
-np.save(np_path + 'kaggle_jena_y.npy', arr=y)
+np.save(np_path + 'kaggle_jena_x18.npy', arr=x)
+np.save(np_path + 'kaggle_jena_y18.npy', arr=y)
