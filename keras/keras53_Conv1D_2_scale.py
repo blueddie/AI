@@ -1,6 +1,6 @@
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Dense, SimpleRNN, LSTM
+from keras.layers import Dense, SimpleRNN, LSTM, Conv1D, Flatten
 from keras.callbacks import EarlyStopping
 
 #1. 데이터
@@ -16,11 +16,8 @@ print(x.shape)  #(13, 3, 1)
 
 #2. 모델
 model = Sequential()
-model.add(LSTM(units=13, input_shape=(3,1))) #timesteps, features
-model.add(Dense(32))
-model.add(Dense(16))
-model.add(Dense(32))
-model.add(Dense(16))
+model.add(Conv1D(filters=24, kernel_size=2 ,input_shape=(3,1))) #timesteps, features
+model.add(LSTM(units=12, input_shape=(3,1)))
 model.add(Dense(32))
 model.add(Dense(18))
 model.add(Dense(1))
@@ -50,3 +47,7 @@ print('예측 값은 : ',  y_predict)
 # loss :  5.169447376829339e-07
 # 1/1 [==============================] - 0s 117ms/step
 # 예측 값은 :  [[80.38114]]
+
+#Conv1D LSTM
+
+

@@ -6,19 +6,15 @@ from keras.models import Sequential, Model
 from keras.layers import Dense, Conv2D, Flatten, Dropout,MaxPooling2D, GlobalAveragePooling2D, Input, LSTM, Bidirectional
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
 
 # import os
-from sklearn.model_selection import train_test_split
 
 
 np_path = 'c:\\_data\\_save_npy\\'
 
 x = np.load(np_path + 'kaggle_jena_x18.npy')
 y = np.load(np_path + 'kaggle_jena_y18.npy')
-
-x = x.astype(np.float32)
-y = y.astype(np.float32)
-
 
 print(x.shape)  #(420545, 6, 14)
 print(y.shape)  #(420545,)
