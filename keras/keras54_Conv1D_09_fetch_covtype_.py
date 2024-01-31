@@ -39,10 +39,10 @@ y = pd.get_dummies(y)
 # ohe = OneHotEncoder(sparse=True)
 # y = ohe.fit_transform(y).toarray()
 
-X = X.reshape(-1, 54, 1)
+# X = X.reshape(-1, 54, 1)
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=15152, train_size=0.8)
+x_train, x_test, y_train, y_test = train_test_split(X, y, random_state=15152, train_size=0.8)
 
 #2
 model = Sequential()
@@ -53,7 +53,6 @@ model.add(Dense(28))
 model.add(Dense(7, activation='softmax'))
 
 #3
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 from keras.callbacks import EarlyStopping
 es = EarlyStopping(monitor='val_accuracy'
@@ -62,24 +61,30 @@ es = EarlyStopping(monitor='val_accuracy'
                    , verbose=1
                    , restore_best_weights=True
                    )
-model.fit(X_train, y_train, epochs=5000, batch_size=100
+
+
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+scaler.fit(x_train)
+x_train = scaler.transform(x_train)
+x_test = scaler.transform(x_test)
+x_train = x_train.reshape(-1, 54, 1)
+x_test = x_test.reshape(-1, 54, 1)
+
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.fit(x_train, y_train, epochs=200, batch_size=512
         , validation_split=0.2
         , callbacks=[es]
         )
 
 
-from sklearn.preprocessing import MinMaxScaler
-scaler = MinMaxScaler()
-scaler.fit(X_train)
-x_train = scaler.transform(X_train)
-x_test = scaler.transform(X_test)
-
-results = model.evaluate(X_test, y_test)
+results = model.evaluate(x_test, y_test)
 print('loss : ', results[0])
 print('accuracy : ', results[1])
 
 
-y_predict = model.predict(X_test)
+y_predict = model.predict(x_test)
 
 print(y_test)
 print(y_predict)

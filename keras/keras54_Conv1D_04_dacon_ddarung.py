@@ -70,10 +70,10 @@ es = EarlyStopping(monitor='val_loss'
                    , verbose=1
                    , restore_best_weights=True
                    )
-def RMSLE(y_test, y_predict):
-    rmsle = np.sqrt(mean_squared_log_error(y_test, y_predict))
+def RMSE(y_test, y_predict):
+    rmse = np.sqrt(mean_squared_error(y_test, y_predict))
     
-    return rmsle
+    return rmse
 
 
     # rs = 56238592
@@ -105,7 +105,7 @@ model.fit(X_train, y_train, epochs=1000, batch_size=47
 loss = model.evaluate(X_test, y_test)
 y_predict = model.predict(X_test)
 r2 = r2_score(y_test, y_predict)
-rmsle = RMSLE(y_test, y_predict)
+rmse = RMSE(y_test, y_predict)
 
 y_submit = model.predict([test_csv])
 
@@ -114,11 +114,11 @@ submission_csv['count'] = y_submit
 import datetime
 date = datetime.datetime.now().strftime("%m%d_%H%M")    
     
-submission_csv.to_csv(path + date + str(round(rmsle, 3)) + ".csv", index=False)
+submission_csv.to_csv(path + date + '_'+ str(round(rmse, 3)) + ".csv", index=False)
    
 
 print("loss : ", loss)
-print("rmsle : " , rmsle)
+print("rmse : " , rmse)
 
 # [6708.2822265625, 0.0034246575087308884]  scaleX
 # [6410.08203125, 0.0]    scale

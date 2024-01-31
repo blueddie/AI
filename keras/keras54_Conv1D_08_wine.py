@@ -74,3 +74,6 @@ def ACC(aaa, bbb):
 
 acc = ACC(y_test, y_predict)
 print("accuracy : ", acc)
+
+
+#accuracy :  0.9722222222222222
