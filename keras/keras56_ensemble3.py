@@ -20,10 +20,10 @@ y1 = np.array(range(3001, 3101))   # 비트코인 종가
 y2 = np.array(range(13001, 13101))   # 비트코인 종가
 print(y1.shape, y2.shape)                    # (100,)
 
-x1_train, x1_test, x2_train, x2_test, x3_train, x3_test, y_train, y_test = train_test_split(x1_datasets, x2_datasets, x3_datasets, y, train_size=0.7, random_state=123)
+x1_train, x1_test, x2_train, x2_test, x3_train, x3_test, y1_train, y1_test, y2_train, y2_test = train_test_split(x1_datasets, x2_datasets, x3_datasets, y1, y2, train_size=0.7, random_state=123)
 # x2_trian, x2_test, y_train, y_test = train_test_split(x2_datasets, y, train_size=0.7, random_state=123)
 
-print(x1_train.shape, x2_train.shape, x3_train.shape ,y_train.shape)    #(70, 2) (70, 3) (70, 4) (70,)
+print(x1_train.shape, x2_train.shape, x3_train.shape ,y1_train.shape, y2_train.shape)    #(70, 2) (70, 3) (70, 4) (70,)
 
 #2-1. 모델
 input1 = Input(shape=(2,), name='x1_train')
@@ -57,9 +57,10 @@ output111 = Dense(5, activation='relu', name='bit114')(dense113)
 merge1 = concatenate([output1, output11, output111], name='mg1')
 merge2 = Dense(10, name='mg2')(merge1)
 merge3 = Dense(11, name='mg3')(merge2)
-last_output = Dense(1, name='last')(merge3)
+last_output1 = Dense(1, name='last')(merge3)
+last_output2 = Dense(1, name='last2')(merge3)
 
-model = Model(inputs=[input1, input11, input111], outputs=last_output)       # 2개 이상은 뭐다? 리스트 ㅋ
+model = Model(inputs=[input1, input11, input111], outputs=[last_output1, last_output2])       # 2개 이상은 뭐다? 리스트 ㅋ
 
 model.summary()
 
@@ -67,17 +68,22 @@ model.summary()
 #3 컴파일 , 훈련
 es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
 model.compile(loss='mse', optimizer='adam')
-model.fit([x1_train, x2_train, x3_train], y_train, batch_size=5, validation_split=0.2, epochs=1000)
+model.fit([x1_train, x2_train, x3_train], [y1_train, y2_train],validation_split=0.2, batch_size=5, epochs=1000, callbacks=[es])
 
 #4
 
-loss = model.evaluate([x1_test, x2_test, x3_test], y_test)
+results = model.evaluate([x1_test, x2_test, x3_test], [y1_test, y2_test])
 # y_predict = model.predict([x1_test, x2_test, x3_test])
 
 # r2 = r2_score(y_test, y_predict)
-
-print('loss : ' , loss)
+y_predict = model.predict([x1_test, x2_test, x3_test])
+print('loss : ' , results)
 # print('r2 score : ' , r2)
 
+print(y_predict)
 # loss :  5.79578161239624
 # loss :  0.7508423924446106
+
+# loss :  0.11951836198568344
+
+# loss :  0.04891638830304146

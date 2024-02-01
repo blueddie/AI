@@ -41,7 +41,8 @@ output11 = Dense(5, activation='relu', name='bit14')(dense13)
 # model2.summary()
 
 #2-3 concatnate
-merge1 = concatenate([output1, output11], name='mg1')
+# merge1 = concatenate([output1, output11], name='mg1')
+merge1 = Concatenate(name='mg1')([output1, output11])
 merge2 = Dense(10, name='mg2')(merge1)
 merge3 = Dense(11, name='mg3')(merge2)
 last_output = Dense(1, name='last')(merge3)
@@ -53,16 +54,13 @@ model.summary()
 #3 컴파일 , 훈련
 es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
 model.compile(loss='mse', optimizer='adam')
-model.fit([x1_train, x2_train], y_train, batch_size=1, validation_split=0.2, epochs=1000)
+model.fit([x1_train, x2_train], y_train, batch_size=1, validation_split=0.2, epochs=1000, callbacks=[es])
 
 #4
 
 loss = model.evaluate([x1_test, x2_test], y_test)
 y_predict = model.predict([x1_test, x2_test])
 
-r2 = r2_score(y_test, y_predict)
-
 print('loss : ' , loss)
-print('r2 score : ' , r2)
-
+# loss :  9.934107225717526e-08
 

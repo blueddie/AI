@@ -66,7 +66,7 @@ model.summary()
 #3 컴파일 , 훈련
 es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
 model.compile(loss='mse', optimizer='adam')
-model.fit([x1_train, x2_train, x3_train], y_train, batch_size=5, validation_split=0.2, epochs=1000)
+model.fit([x1_train, x2_train, x3_train], y_train, batch_size=5, validation_split=0.2, epochs=1000, callbacks=[es])
 
 #4
 
