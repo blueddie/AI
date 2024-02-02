@@ -40,5 +40,16 @@ print(all_text_list)
 x = all_text_list[:len(docs)]
 x_predict = all_text_list[len(docs):]
 
-print(x.shape)
-print(x_predict.shape)
+print(x.shape)          #(15, 7)
+print(x_predict.shape)  #(1, 7)
+
+#2
+model = Sequential()
+model.add(Embedding(word_size, 10))#, input_length=5))       # 단어 사전의 개수, 출력 노드의 수, 단어의 길이
+model.add(LSTM(512, input_shape=(5,1), activation='relu')) 
+model.add(Dense(256))
+model.add(Dense(128))
+model.add(Dense(64))
+model.add(Dense(32))
+model.add(Dense(1, activation='sigmoid'))
+
