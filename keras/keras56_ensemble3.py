@@ -6,6 +6,7 @@ from keras.callbacks import EarlyStopping
 from sklearn.metrics import r2_score
 
 
+
 #.1 데이터
 x1_datasets = np.array([range(301, 401), range(301, 401)]).T                  # 삼성 종가, 하이닉스 종가
 x2_datasets = np.array([range(101, 201), range(411, 511), range(150, 250)]).T # 원유, 환율, 금시세
@@ -57,10 +58,10 @@ output111 = Dense(5, activation='relu', name='bit114')(dense113)
 merge1 = concatenate([output1, output11, output111], name='mg1')
 merge2 = Dense(10, name='mg2')(merge1)
 merge3 = Dense(11, name='mg3')(merge2)
-last_output1 = Dense(1, name='last')(merge3)
-last_output2 = Dense(1, name='last2')(merge3)
+last_output = Dense(1, name='last')(merge3)
+# last_output2 = Dense(1, name='last2')(merge3)
 
-model = Model(inputs=[input1, input11, input111], outputs=[last_output1, last_output2])       # 2개 이상은 뭐다? 리스트 ㅋ
+model = Model(inputs=[input1, input11, input111], outputs=[last_output])       # 2개 이상은 뭐다? 리스트 ㅋ
 
 model.summary()
 
@@ -68,7 +69,7 @@ model.summary()
 #3 컴파일 , 훈련
 es = EarlyStopping(monitor='val_loss', mode='min', patience=50, verbose=1, restore_best_weights=True)
 model.compile(loss='mse', optimizer='adam')
-model.fit([x1_train, x2_train, x3_train], [y1_train, y2_train],validation_split=0.2, batch_size=5, epochs=1000, callbacks=[es])
+model.fit([x1_train, x2_train, x3_train], [y1_train, y2_train], batch_size=5, epochs=1000, callbacks=[es])
 
 #4
 

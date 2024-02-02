@@ -16,7 +16,7 @@ y = datasets.target
 x = x.reshape(-1 , 13, 1)
 # print(x.shape)  #(506, 13, 1)
 print(y.shape)  #(506,)
-'''
+
 
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=3, train_size=0.8)
@@ -74,4 +74,4 @@ print("loss : " , loss)
 # R2 score :  0.7228187387717201
 # loss :  3.4327473640441895
 
-'''
+
