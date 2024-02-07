@@ -1,6 +1,6 @@
 from keras.models import Sequential
 import pandas as pd
-from keras.models import Sequential, Model
+from keras.models import Sequential, Model, load_model
 from keras.layers import Dense, Dropout, Input, concatenate, LSTM, GRU, Bidirectional, Conv1D
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
@@ -207,38 +207,11 @@ x_samsung_pred = x_samsung_pred.reshape(x_samsung_pred.shape[0], timesteps, 15)
 x_amore_pred = x_amore_pred.reshape(x_amore_pred.shape[0], timesteps, 15)
 
 #2-1 모델
-input1 = Input(shape=(timesteps,15))
-dense1 = Bidirectional(LSTM(64))(input1)
-dense2 = Dense(32)(dense1)
-dense3 = Dense(16)(dense2)
-dense4 = Dense(32)(dense3)
-output1 = Dense(16)(dense4)
 
-#2-2 모델
-input11 = Input(shape=(timesteps,15))
-dense11 = Bidirectional(LSTM(128))(input11)
-dense12 = Dense(64)(dense11)
-dense13 = Dense(32)(dense12)
-dense14 = Dense(32)(dense13)
-output11 = Dense(16)(dense14)
 
-#2-3 concatnate
-merge1 = concatenate([output1, output11], name='mg1')
-merge2 = Dense(32, name='mg2')(merge1)
-merge3 = Dense(16, name='mg3')(merge2)
-merge4 = Dense(8, name='mg4')(merge3)
-last_output1 = Dense(1, name='last1')(merge4)
-last_output2 = Dense(1, name='last2')(merge4)
-
-model = Model(inputs=[input1, input11], outputs=[last_output1, last_output2])
-
-model.summary()
+model = load_model('c:\\_data\\sihum\\0206_1737_ss_0.985_am_0.965save_weights.hdf5')
 
 #3
-es = EarlyStopping(monitor='val_loss', mode='min', patience=150, verbose=1, restore_best_weights=True)
-
-model.compile(loss='mae', optimizer='adam', loss_weights=[0.7, 0.3])
-model.fit([x_samsung_train, x_amore_train], [y_samsung_train, y_amore_train], batch_size=10, epochs=100000, callbacks=[es], validation_split=0.2)
 
 date = datetime.datetime.now().strftime("%m%d_%H%M")
 
@@ -261,9 +234,9 @@ test_predict = model.predict([x_samsung_pred, x_amore_pred])
 #     print('삼성 실제 값: ', y_samsung_test[i], '/ 에측가 : ', y_predict[0][i])
 # for i in range(len(y_predict[1])):
 #     print('아모레 실제 값: ', y_amore_test[i], '/ 에측가 : ', y_predict[1][i])
-model.save('C:\\_data\\sihum\\' + date + '_ss_' + str(round(r2, 3)) + '_am_'+ str(round(r22, 3)) + 'save_weights.hdf5')
-print('삼성 시가 : ' , test_predict[0])
-print('아모레 종가 : ', test_predict[1])
+# model.save('C:\\_data\\sihum\\' + date + '_ss_' + str(round(r2, 3)) + '_am_'+ str(round(r22, 3)) + 'save_weights.hdf5')
+print('삼성 시가 : ' , np.round(test_predict[0], 2))
+print('아모레 종가 : ', np.round(test_predict[1], 2))
 
 
 # samsung r2 :  0.9294104626372455
@@ -307,5 +280,4 @@ print('아모레 종가 : ', test_predict[1])
 # 삼성 시가 :  [[74415.74]]
 # 아모레 종가 :  [[118608.805]]
 #################################################
-# timesteps 30
-
+# ts 30
