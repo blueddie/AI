@@ -36,7 +36,7 @@ for name, algorithm in allAlgorithms:
     
     try:
         #2 모델
-        model = algorithm()
+        model = algorithm(verbose=1)
         #3 훈련
         model.fit(x_train, y_train)
         acc = model.score(x_test, y_test)
