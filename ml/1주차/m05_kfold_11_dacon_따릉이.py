@@ -3,12 +3,13 @@ import numpy as np
 import pandas as pd
 from keras.models import Sequential, Model
 from keras.layers import Dense, Input, Dropout
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.metrics import r2_score, mean_squared_error
 import random
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.svm import LinearSVR
-
+from sklearn.ensemble import RandomForestRegressor
+import numpy as np
 
 #1. 데이터
 path = "c:\\_data\\dacon\\ddarung\\"
@@ -43,18 +44,19 @@ second_name = ".csv"
 print(X.shape)  #(1459, 9)
 
 
-X = X.astype(np.float32)
+x = X.astype(np.float32)
 test_csv = test_csv.astype(np.float32)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.86, random_state=56238592)
+n_splits = 5
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
 
-#2
-model = LinearSVR(C=3)
+#2           
+model = RandomForestRegressor()
 
 #3
-model.fit(X_train, y_train)
+scores = cross_val_score(model, x, y, cv=kfold)  #cv 교차검증
 
-#4
+print(f'r2 : {scores}\n평균 r2: {round(np.mean(scores), 4)}')
 
-results = model.score(X_test, y_test)
-print('model.score : ', results)     
+# r2 : [0.79055066 0.76818674 0.76433662 0.78806186 0.78104707]
+# 평균 r2: 0.7784

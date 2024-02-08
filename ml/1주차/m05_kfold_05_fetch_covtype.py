@@ -28,3 +28,5 @@ model = KNeighborsClassifier()
 scores = cross_val_score(model, x, y, cv=kfold)  #cv 교차검증
 
 print(f'ACC : {scores}\n평균 ACC: {round(np.mean(scores), 4)}')
+# ACC : [0.96832268 0.96858085 0.96873548 0.96958744 0.96873548]
+# 평균 ACC: 0.9688

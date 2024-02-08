@@ -1,12 +1,13 @@
 from sklearn.datasets import fetch_california_housing
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import MinMaxScaler
 import datetime
 from sklearn.svm import LinearSVR
-
+from sklearn.ensemble import RandomForestRegressor
+import numpy as np
 #1
 datasets = fetch_california_housing()
 x = datasets.data
@@ -20,13 +21,16 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 
 #2
-model = LinearSVR(C=33)
+n_splits = 5
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+
+#2           
+model = RandomForestRegressor()
 
 #3
-model.fit(x_train, y_train)
+scores = cross_val_score(model, x, y, cv=kfold)  #cv 교차검증
 
-#4
-results = model.score(x_test, y_test)
-print('model.score : ', results)     
+print(f'r2 : {scores}\n평균 r2: {round(np.mean(scores), 4)}')
 
-# model.score :  0.5705531736953227
+# r2 : [0.81329299 0.82471812 0.81016245 0.79435548 0.80404442]
+# 평균 r2: 0.8093

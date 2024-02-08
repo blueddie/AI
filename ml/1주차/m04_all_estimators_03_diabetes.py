@@ -35,7 +35,7 @@ for name, algorithm in allAlgorithms:
         acc = model.score(x_test, y_test)
         print(name, '의 정답률 : ', acc)
     except Exception as e:
-        print(name , '에러 발생', e)
+        # print(name , '에러 발생', e)
         continue
     
 # ARDRegression 의 정답률 :  0.7096440734999497

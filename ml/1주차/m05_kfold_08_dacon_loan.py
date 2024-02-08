@@ -99,3 +99,6 @@ model = AdaBoostClassifier()
 scores = cross_val_score(model, x, y, cv=kfold)  #cv 교차검증
 
 print(f'ACC : {scores}\n평균 ACC: {round(np.mean(scores), 4)}')
+
+# ACC : [0.50355678 0.50168752 0.50236253 0.49270471 0.49553432]
+# 평균 ACC: 0.4992
