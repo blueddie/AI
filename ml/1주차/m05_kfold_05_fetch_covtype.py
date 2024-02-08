@@ -9,6 +9,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.neighbors import KNeighborsClassifier
+
 
 #1
 datasets = fetch_covtype()
@@ -20,7 +22,7 @@ n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 #2           
-model = AdaBoostClassifier()
+model = KNeighborsClassifier()
 
 #3
 scores = cross_val_score(model, x, y, cv=kfold)  #cv 교차검증
