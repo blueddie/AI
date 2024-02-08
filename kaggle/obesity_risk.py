@@ -63,9 +63,9 @@ print(non_float_pred)   #['Gender', 'family_history_with_overweight', 'FAVC', 'C
 for col in non_float_x:
     print(f'x : {pd.value_counts(x[col])}')
     print(f'x_pred : {pd.value_counts(x_pred[col])}')
+    print('------------------------------------')
 
-
-
+# CALC -> Always 2 train에 없는 라벨 있음
 
 
 # for col in x.columns :
