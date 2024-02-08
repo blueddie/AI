@@ -73,7 +73,7 @@ for col in non_float_x:
 #         x[col] = x[col].astype('float32')
 # print(x.dtypes)
 
-# x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=337)
+# x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=337, stratify=y)
 #2 모델
 
 # model = RandomForestClassifier()
