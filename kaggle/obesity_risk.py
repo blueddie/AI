@@ -3,6 +3,10 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+import lightgbm  as lgb
+import catboost as cb
+import xgboost as xgb
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -66,21 +70,55 @@ for col in non_float_x:
     print('------------------------------------')
 
 # CALC -> Always 2 train에 없는 라벨 있음
+x_pred['CALC'] = x_pred['CALC'].replace({'Always' : 'Sometimes'})
+# print(pd.value_counts(x_pred['CALC']))
 
+for column in x.columns:
+    if (x[column].dtype != 'float64'):
+        encoder = LabelEncoder()
+        x[column] = encoder.fit_transform(x[column])
+        x_pred[column] = encoder.transform(x_pred[column])
+    
 
-# for col in x.columns :
-#     if x[col].dtype == 'float64':
-#         x[col] = x[col].astype('float32')
+        
+for col in x.columns :
+    if x[col].dtype != 'float32':
+        x[col] = x[col].astype('float32')
+        x_pred[col] = x_pred[col].astype('float32')
 # print(x.dtypes)
+# print(x_pred.dtypes)
 
-# x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=337, stratify=y)
+
+encoder = LabelEncoder()
+y = encoder.fit_transform(y)
+
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=337, stratify=y)
 #2 모델
 
 # model = RandomForestClassifier()
+# model = lgb.LGBMClassifier()
+# model = cb.CatBoost()
+model = xgb.XGBClassifier()
 
 # #3.
-# model.fit(x_train, y_train)
+model.fit(x_train, y_train)
 
 # #4.
-# results = model.score(x_test, y_test)
+# from sklearn.metrics import accuracy_score
+results = model.score(x_test, y_test)
+# results = accuracy_score(y_test, y_pred)
+y_pred = model.predict(x_test)
+
+y_submit = model.predict(x_pred)
+y_submit = encoder.inverse_transform(y_submit)
+
 # print('acc : ' , results)
+
+import datetime
+
+date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
+
+submission_csv['NObeyesdad'] = pd.DataFrame(y_submit.reshape(-1,1))
+submission_csv.to_csv(csv_path + f"{date}_{model.__class__.__name__}_acc_{results:.2f}.csv", index=False)
+
