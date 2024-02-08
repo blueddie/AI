@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score
 import random
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.svm import LinearSVC
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.ensemble import AdaBoostClassifier
 
 
@@ -27,7 +27,9 @@ y = train_csv['species']
 # print(pd.value_counts(y))
 
 n_splits = 5
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+# kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+# kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 #2           
 model = AdaBoostClassifier()
@@ -40,3 +42,5 @@ print(f'ACC : {scores}\n평균 ACC: {round(np.mean(scores), 4)}')
 # ACC : [0.95833333 0.875      0.91666667 1.         0.95833333]
 # 평균 ACC: 0.9417
 
+# ACC : [0.95833333 0.91666667 0.91666667 0.875      0.95833333]
+# 평균 ACC: 0.925

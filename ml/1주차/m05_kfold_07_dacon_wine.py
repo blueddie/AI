@@ -9,7 +9,7 @@ import random
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import LinearSVC
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.ensemble import AdaBoostClassifier
 
 
@@ -33,7 +33,8 @@ x = train_csv.drop(['quality'], axis=1)
 y = train_csv['quality']
 
 n_splits = 5
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+# kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 #2           
 model = AdaBoostClassifier()
@@ -45,3 +46,6 @@ print(f'ACC : {scores}\n평균 ACC: {round(np.mean(scores), 4)}')
 
 # ACC : [0.38636364 0.36818182 0.46132848 0.37852593 0.36305732]
 # 평균 ACC: 0.3915
+
+# ACC : [0.46909091 0.46909091 0.45859873 0.39399454 0.37579618]
+# 평균 ACC: 0.4333

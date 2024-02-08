@@ -1,7 +1,7 @@
 from sklearn.datasets import fetch_california_housing
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
-from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold
 from sklearn.metrics import r2_score
 from sklearn.preprocessing import MinMaxScaler
 import datetime
@@ -23,6 +23,7 @@ x_test = scaler.transform(x_test)
 #2
 n_splits = 5
 kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+# kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
 #2           
 model = RandomForestRegressor()
