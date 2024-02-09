@@ -62,7 +62,7 @@ non_float_pred = []
 for col in x_pred.columns:
     if x_pred[col].dtype != 'float64':
         non_float_pred.append(col)
-print(non_float_pred)   #['Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
+# print(non_float_pred)   #['Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
 
 for col in non_float_x:
     print(f'x : {pd.value_counts(x[col])}')
@@ -97,9 +97,10 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 #2 모델
 
 # model = RandomForestClassifier()
-# model = lgb.LGBMClassifier()
+model = lgb.LGBMClassifier()
 # model = cb.CatBoost()
-model = xgb.XGBClassifier()
+# model = xgb.XGBClassifier()
+
 
 # #3.
 model.fit(x_train, y_train)
