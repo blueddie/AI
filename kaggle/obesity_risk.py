@@ -93,7 +93,7 @@ encoder = LabelEncoder()
 y = encoder.fit_transform(y)
 
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=337, stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1004, stratify=y)
 #2 모델
 
 # model = RandomForestClassifier()
@@ -120,5 +120,5 @@ import datetime
 date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
 
 submission_csv['NObeyesdad'] = pd.DataFrame(y_submit.reshape(-1,1))
-submission_csv.to_csv(csv_path + f"{date}_{model.__class__.__name__}_acc_{results:.2f}.csv", index=False)
+submission_csv.to_csv(csv_path + f"{date}_{model.__class__.__name__}_acc_{results:.3f}.csv", index=False)
 
