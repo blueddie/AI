@@ -94,6 +94,14 @@ y = encoder.fit_transform(y)
 
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1004, stratify=y)
+
+# parameters = [
+#     {"n_estimators" : [100, 200], "max_depth":[6, 10 ,12], "min_samples_leaf":[3,10]}
+#     , {"max_depth":[6, 8, 10, 12], "min_samples_leaf":[3, 5, 7, 10]}
+#     , {"min_samples_leaf":[3, 5, 7, 10], "min_samples_split":[2, 3, 5, 10]}
+#     , {"min_samples_split":[2, 3, 5, 10]}
+#     , {"n_jobs":[-1, 2, 4], "min_samples_split":[2, 3, 5, 10]}
+# ]
 #2 모델
 
 # model = RandomForestClassifier()
