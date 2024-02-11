@@ -93,7 +93,7 @@ encoder = LabelEncoder()
 y = encoder.fit_transform(y)
 
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=1004, stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=585, stratify=y)
 
 # parameters = [
 #     {"n_estimators" : [100, 200], "max_depth":[6, 10 ,12], "min_samples_leaf":[3,10]}
@@ -105,9 +105,9 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 #2 모델
 
 # model = RandomForestClassifier()
-model = lgb.LGBMClassifier()
+# model = lgb.LGBMClassifier()
 # model = cb.CatBoost()
-# model = xgb.XGBClassifier()
+model = xgb.XGBClassifier()
 
 
 # #3.
