@@ -68,3 +68,7 @@ print("최적튠 r2 : " , r2_score(y_test, y_pred_best))
 # best_score :  0.975 
 # model.score :  0.9333333333333333
 print("걸린시간 : ", round(end_time - start_time, 2), "초")
+
+# r2 score :  0.8050928958570419
+# 최적튠 r2 :  0.8050928958570419
+# 걸린시간 :  15.44 초
