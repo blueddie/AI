@@ -1,39 +1,32 @@
-import numpy as np
-from sklearn.datasets import load_breast_cancer
+from sklearn.datasets import fetch_california_housing
 from keras.models import Sequential
 from keras.layers import Dense
-import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error,accuracy_score
-from keras.callbacks import EarlyStopping
-from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler
-from sklearn.svm import LinearSVC
+import time                     # 시간 알고싶을때
+from sklearn.svm import LinearSVR
+import warnings
 from sklearn.utils import all_estimators
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
-from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV
+from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.metrics import accuracy_score, r2_score
+from sklearn.preprocessing import MinMaxScaler, RobustScaler,StandardScaler,MaxAbsScaler
+from sklearn.utils import all_estimators
+from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
-import warnings
 import time
+from sklearn.ensemble import RandomForestRegressor
+
+import warnings
 warnings.filterwarnings ('ignore')
 
-
-datasets= load_breast_cancer()
-
+datasets = fetch_california_housing()
 X = datasets.data
 y = datasets.target
-
-
 n_splits= 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, shuffle=False, random_state=3)
-
-mms = MinMaxScaler()
-mms.fit(X_train)
-X_train = mms.transform(X_train)
-X_test = mms.transform(X_test)
-
-
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True, random_state=42)
 
 
 parameters = [
@@ -47,7 +40,7 @@ parameters = [
 ]
 
  #2. 모델 구성
-model = GridSearchCV(RandomForestClassifier(), parameters, cv=kfold, verbose=1,
+model = RandomizedSearchCV(RandomForestRegressor(), parameters, cv=kfold, verbose=1,
                     # refit = True,     # default
                      n_jobs=-1)
 
@@ -67,20 +60,11 @@ print('model.score : ', model.score(X_test, y_test))
 # results = model.score(X_test, y_test)
 # print(results)
 y_predict = model.predict(X_test)
-acc = accuracy_score(y_test, y_predict)
-print("accuracy_score : ", acc)
+r2 = r2_score(y_test, y_predict)
+print("r2 score : ", r2)
 
 y_pred_best = model.best_estimator_.predict(X_test)
-print("최적튠 ACC : " , accuracy_score(y_test, y_pred_best))
+print("최적튠 r2 : " , r2_score(y_test, y_pred_best))
 # best_score :  0.975 
 # model.score :  0.9333333333333333
 print("걸린시간 : ", round(end_time - start_time, 2), "초")
-
-
-# 최적의 매개변수 :  RandomForestClassifier(max_depth=12, min_samples_leaf=3)
-# 최적의 파라미터 :  {'max_depth': 12, 'min_samples_leaf': 3}
-# best_score :  0.9559249786871271
-# model.score :  0.9517543859649122
-# accuracy_score :  0.9517543859649122
-# 최적튠 ACC :  0.9517543859649122
-# 걸린시간 :  3.07 초

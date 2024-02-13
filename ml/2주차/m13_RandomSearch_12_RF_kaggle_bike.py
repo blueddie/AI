@@ -1,40 +1,39 @@
 import numpy as np
-from sklearn.datasets import load_breast_cancer
+import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense
-import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error,accuracy_score
-from keras.callbacks import EarlyStopping
-from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler
-from sklearn.svm import LinearSVC
+from sklearn.metrics import r2_score, mean_squared_log_error, mean_squared_error
+import time
+from sklearn.svm import LinearSVR
+import warnings
 from sklearn.utils import all_estimators
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
-from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV
+from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import MinMaxScaler, RobustScaler,StandardScaler,MaxAbsScaler
+from sklearn.utils import all_estimators
+from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
-import warnings
 import time
+from sklearn.ensemble import RandomForestRegressor
+
+import warnings
 warnings.filterwarnings ('ignore')
 
+path = "c:\\_data\\kaggle\\bike\\"
 
-datasets= load_breast_cancer()
+train_csv = pd.read_csv(path + "train.csv", index_col=0)
+test_csv = pd.read_csv(path + "test.csv", index_col=0)
+submission_csv = pd.read_csv(path + "samplesubmission.csv")
 
-X = datasets.data
-y = datasets.target
-
+X = train_csv.drop(['casual', 'registered', 'count'], axis=1)
+y = train_csv['count']      
 
 n_splits= 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, shuffle=False, random_state=3)
-
-mms = MinMaxScaler()
-mms.fit(X_train)
-X_train = mms.transform(X_train)
-X_test = mms.transform(X_test)
-
-
-
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.123, shuffle=True, random_state=6544)
 
 parameters = [
     {'n_estimators': [100,200], 'max_depth': [6,10,12],
@@ -47,7 +46,7 @@ parameters = [
 ]
 
  #2. 모델 구성
-model = GridSearchCV(RandomForestClassifier(), parameters, cv=kfold, verbose=1,
+model = RandomizedSearchCV(RandomForestRegressor(), parameters, cv=kfold, verbose=1,
                     # refit = True,     # default
                      n_jobs=-1)
 
@@ -76,11 +75,5 @@ print("최적튠 ACC : " , accuracy_score(y_test, y_pred_best))
 # model.score :  0.9333333333333333
 print("걸린시간 : ", round(end_time - start_time, 2), "초")
 
-
-# 최적의 매개변수 :  RandomForestClassifier(max_depth=12, min_samples_leaf=3)
-# 최적의 파라미터 :  {'max_depth': 12, 'min_samples_leaf': 3}
-# best_score :  0.9559249786871271
-# model.score :  0.9517543859649122
-# accuracy_score :  0.9517543859649122
-# 최적튠 ACC :  0.9517543859649122
-# 걸린시간 :  3.07 초
+# best_score :  0.354963933675646
+# model.score :  0.4160991861273844

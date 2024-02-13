@@ -1,23 +1,27 @@
+from sklearn.datasets import fetch_covtype
+import pandas as pd
 import numpy as np
-from sklearn.datasets import load_breast_cancer
 from keras.models import Sequential
 from keras.layers import Dense
-import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error,accuracy_score
-from keras.callbacks import EarlyStopping
-from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler, StandardScaler, RobustScaler
+from sklearn.metrics import accuracy_score
+from keras.utils import to_categorical
+from sklearn.preprocessing import OneHotEncoder
+from keras. callbacks import EarlyStopping
 from sklearn.svm import LinearSVC
+import warnings
 from sklearn.utils import all_estimators
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import MinMaxScaler, RobustScaler,StandardScaler,MaxAbsScaler
+from sklearn.utils import all_estimators
 import warnings
 import time
+from sklearn.ensemble import RandomForestClassifier
 warnings.filterwarnings ('ignore')
 
-
-datasets= load_breast_cancer()
+datasets = fetch_covtype()
 
 X = datasets.data
 y = datasets.target
@@ -26,15 +30,8 @@ y = datasets.target
 n_splits= 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, shuffle=False, random_state=3)
 
-mms = MinMaxScaler()
-mms.fit(X_train)
-X_train = mms.transform(X_train)
-X_test = mms.transform(X_test)
-
-
-
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, shuffle=True, random_state=1226)   
 
 parameters = [
     {'n_estimators': [100,200], 'max_depth': [6,10,12],
@@ -75,12 +72,3 @@ print("최적튠 ACC : " , accuracy_score(y_test, y_pred_best))
 # best_score :  0.975 
 # model.score :  0.9333333333333333
 print("걸린시간 : ", round(end_time - start_time, 2), "초")
-
-
-# 최적의 매개변수 :  RandomForestClassifier(max_depth=12, min_samples_leaf=3)
-# 최적의 파라미터 :  {'max_depth': 12, 'min_samples_leaf': 3}
-# best_score :  0.9559249786871271
-# model.score :  0.9517543859649122
-# accuracy_score :  0.9517543859649122
-# 최적튠 ACC :  0.9517543859649122
-# 걸린시간 :  3.07 초

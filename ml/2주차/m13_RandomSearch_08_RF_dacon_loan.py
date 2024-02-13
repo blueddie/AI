@@ -20,7 +20,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import MinMaxScaler, RobustScaler,StandardScaler,MaxAbsScaler
 from sklearn.utils import all_estimators
 import warnings
-from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV
+from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import time
 
@@ -120,7 +120,7 @@ parameters = [
 ]
 
  #2. 모델 구성
-model = GridSearchCV(RandomForestClassifier(), parameters, cv=kfold, verbose=1,
+model = RandomizedSearchCV(RandomForestClassifier(), parameters, cv=kfold, verbose=1, random_state=42, n_iter=20,
                     # refit = True,     # default
                      n_jobs=-1)
 
@@ -154,3 +154,13 @@ print("걸린시간 : ", round(end_time - start_time, 2), "초")
 # accuracy_score :  0.810730356524749
 # 최적튠 ACC :  0.810730356524749
 # 걸린시간 :  130.95 초
+
+#-----------------------------------------------------------
+# Fitting 5 folds for each of 10 candidates, totalling 50 fits
+# 최적의 매개변수 :  RandomForestClassifier(n_jobs=-1)
+# 최적의 파라미터 :  {'n_jobs': -1, 'min_samples_split': 2}
+# best_score :  0.7986536554469421
+# model.score :  0.8089996538594669
+# accuracy_score :  0.8089996538594669
+# 최적튠 ACC :  0.8089996538594669
+# 걸린시간 :  24.67 초
