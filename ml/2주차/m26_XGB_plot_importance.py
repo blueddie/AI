@@ -26,7 +26,7 @@ y = datasets.target
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=13, train_size=0.8, stratify=y)
 
 #2 모델
-models = [DecisionTreeClassifier(random_state=777), RandomForestClassifier(random_state=777), GradientBoostingClassifier(random_state=777), CustomXGBClassifier(random_state=777)]
+models = [DecisionTreeClassifier(), RandomForestClassifier(), GradientBoostingClassifier(), CustomXGBClassifier()]
 
 for model in models :
     
@@ -40,27 +40,23 @@ for model in models :
     print(f"{model} feature importance\n{model.feature_importances_}")
 
    # [0.01666667 0.01666667 0.38920455 0.57746212] 컬럼의 중요도? 첫번째 컬럼은 중요도가 낮다.
-   
-def plot_feature_importances_dataset(model, color):
+
+def plot_feature_importances_dataset(model):
     n_features = len(model.feature_importances_)
     plt.barh(np.arange(n_features), model.feature_importances_,
-             align='center', color=color)
+             align='center')
     plt.yticks(np.arange(n_features), datasets.feature_names)
     plt.xlabel("Feature importance")
     plt.ylabel("Feature")
     plt.ylim(-1, n_features)
     plt.title(model)
-    
 
+# plot_feature_importances_dataset(model)
+# plt.show()
 
-colors = ['r', 'g', 'b', 'y'] 
-i = 1
-for model, color in zip(models, colors):
-    plt.subplot(2, 2, i)
-    plot_feature_importances_dataset(model, color)
-    i += 1
+from xgboost.plotting import plot_importance
+plot_importance(model)
 plt.show()
-
 # DecisionTreeClassifier acc : 1.0
 # DecisionTreeClassifier feature importance
 # [0.01666667 0.01666667 0.88920455 0.07746212]
