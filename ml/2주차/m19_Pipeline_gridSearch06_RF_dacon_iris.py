@@ -19,9 +19,15 @@ from sklearn.utils import all_estimators
 from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import time
+from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import HalvingGridSearchCV
+import random
+random.seed(42)
+np.random.seed(42)
 warnings.filterwarnings ('ignore')
+
+
 
 
 path = "c:\\_data\\dacon\\iris\\"
@@ -43,52 +49,50 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, shuffle=True, random_state=1226, stratify=y)           # 1226 713
 print(X_train.shape)
 
+# parameters = [
+#     {'n_estimators': [100,200], 'max_depth': [6,10,12],
+#      'min_samples_leaf' : [3, 10]},
+#     {'max_depth' : [6, 8, 10, 12], 'min_samples_leaf' : [3, 5, 7, 10]},
+#     {'min_samples_leaf' : [3, 5, 7, 10],
+#      'min_samples_split' : [2, 3, 5, 10]},
+#     {'min_samples_split' : [2, 3, 5,10]},
+#     {'n_jobs' : [-1, 10, 20], 'min_samples_split' : [2, 3, 5, 10]}   
+# ]
+
 parameters = [
-    {'n_estimators': [100,200], 'max_depth': [6,10,12],
-     'min_samples_leaf' : [3, 10]},
-    {'max_depth' : [6, 8, 10, 12], 'min_samples_leaf' : [3, 5, 7, 10]},
-    {'min_samples_leaf' : [3, 5, 7, 10],
-     'min_samples_split' : [2, 3, 5, 10]},
-    {'min_samples_split' : [2, 3, 5,10]},
-    {'n_jobs' : [-1, 10, 20], 'min_samples_split' : [2, 3, 5, 10]}   
+    {"RF__n_estimators" : [100, 200], "RF__max_depth":[6, 10 ,12], "RF__min_samples_leaf":[3,10]}    # 12
+    , {"RF__max_depth":[6, 8, 10, 12], "RF__min_samples_leaf":[3, 5, 7, 10]}                         # 16
+    , {"RF__min_samples_leaf":[3, 5, 7, 10], "RF__min_samples_split":[2, 3, 5, 10]}                  # 16
+    , {"RF__min_samples_split":[2, 3, 5, 10]}                                                        # 4
 ]
 
  #2. 모델 구성
-model = HalvingGridSearchCV(RandomForestClassifier()
-                           , parameters
-                           , cv=kfold
-                           , verbose=1
-                        #    , n_iter=20
-                           , random_state=33
-                           , n_jobs=-1
-                           , factor=3
-                           , min_resources=12
-                           )
+# model = HalvingGridSearchCV(RandomForestClassifier()
+#                            , parameters
+#                            , cv=kfold
+#                            , verbose=1
+#                         #    , n_iter=20
+#                            , random_state=33
+#                            , n_jobs=-1
+#                            , factor=3
+#                            , min_resources=12
+#                            )
 
+pipe = Pipeline([("MinMax", MinMaxScaler())
+                  , ("RF", RandomForestClassifier())])
+  
+model = GridSearchCV(pipe
+                     , parameters
+                     , cv=5
+                     , verbose=1
+                     )  
 
-
-start_time = time.time()
+#3 훈련
 model.fit(X_train, y_train)
-end_time = time.time()
-print("최적의 매개변수 : ", model.best_estimator_)
-# 최적의 매개변수 :  SVC(C=1, kernel='linear')
 
-print("최적의 파라미터 : ", model.best_params_)
-# 최적의 파라미터 :  {'C': 1, 'degree': 3, 'kernel': 'linear'}
-
-print('best_score : ', model.best_score_)
-print('model.score : ', model.score(X_test, y_test))
-# results = model.score(X_test, y_test)
-# print(results)
-y_predict = model.predict(X_test)
-acc = accuracy_score(y_test, y_predict)
-print("accuracy_score : ", acc)
-
-y_pred_best = model.best_estimator_.predict(X_test)
-print("최적튠 ACC : " , accuracy_score(y_test, y_pred_best))
-# best_score :  0.975 
-# model.score :  0.9333333333333333
-print("걸린시간 : ", round(end_time - start_time, 2), "초")
+#4 평가
+results = model.score(X_test, y_test)
+print('model : ', " acc :", results)
 
 # best_score :  0.9632034632034632
 # model.score :  1.0
