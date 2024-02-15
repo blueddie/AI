@@ -39,6 +39,11 @@ print(f"model.score : {results}")
 evr = pca.explained_variance_ratio_
 evr_cumsum = np.cumsum(evr)
 print(evr_cumsum)
+
+import matplotlib.pyplot as plt
+plt.plot(evr_cumsum)
+plt.grid()
+plt.show()
 # print(evr)              # 1.0에 가까울 때 제일 좋다
 # print(sum(evr)) # 1.0
 
