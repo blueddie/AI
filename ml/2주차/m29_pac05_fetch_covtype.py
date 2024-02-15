@@ -51,3 +51,6 @@ for i in range(1, x_train.shape[1] + 1):
     results = model.score(x2, y_test)
     print(x1.shape)
     print(f"model.score : {results}")
+    evr = pca.explained_variance_ratio_
+    evr_cumsum = np.cumsum(evr)
+    print(evr_cumsum)

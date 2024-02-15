@@ -13,6 +13,7 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from xgboost import XGBRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+import numpy as np
 #1
 datasets = fetch_california_housing()
 x = datasets.data
@@ -40,6 +41,9 @@ for i in range(1, x_train.shape[1] + 1):
     results = model.score(x2, y_test)
     print(x1.shape)
     print(f"model.score : {results}")
+    evr = pca.explained_variance_ratio_
+    evr_cumsum = np.cumsum(evr)
+    print(evr_cumsum)
 
 # DecisionTreeRegressor r2 : 0.6001035557167496
 # DecisionTreeRegressor feature importance
@@ -57,3 +61,30 @@ for i in range(1, x_train.shape[1] + 1):
 # XGBRegressor feature importance
 # [0.48721272 0.06797588 0.05002455 0.02223908 0.02304351 0.13496281
 #  0.10358929 0.11095219]
+
+# (16512, 1)
+# model.score : -0.27135423371394496
+# [0.25189445]
+# (16512, 2)
+# model.score : 0.18325811071096032
+# [0.25189445 0.48746192]
+# (16512, 3)
+# model.score : 0.3542490385252429
+# [0.25189445 0.48746192 0.64630702]
+# (16512, 4)
+# model.score : 0.5532932987029229
+# [0.25189445 0.48746192 0.64630702 0.77604261]
+# (16512, 5)
+# model.score : 0.5871647746648014
+# [0.25189445 0.48746192 0.64630702 0.77604261 0.90138771]
+# (16512, 6)
+# model.score : 0.6508268900666746
+# [0.25189445 0.48746192 0.64630702 0.77604261 0.90138771 0.98331714]
+# (16512, 7)
+# model.score : 0.7156404137012943
+# [0.25189445 0.48746192 0.64630702 0.77604261 0.90138771 0.98331714
+#  0.99399724]
+# (16512, 8)
+# model.score : 0.7332490651644745
+# [0.25189445 0.48746192 0.64630702 0.77604261 0.90138771 0.98331714
+#  0.99399724 1.        ]
