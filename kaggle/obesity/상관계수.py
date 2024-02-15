@@ -1,23 +1,14 @@
-# https://www.kaggle.com/competitions/playground-series-s4e2/overview
-
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-import lightgbm  as lgb
-import catboost as cb
-import xgboost as xgb
-from sklearn.model_selection import train_test_split, KFold, cross_val_score, StratifiedKFold, cross_val_predict, RandomizedSearchCV, GridSearchCV
-import time
-from sklearn.metrics import accuracy_score
-from scipy.stats import uniform, randint
+import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.preprocessing import StandardScaler, RobustScaler
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 import warnings
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-warnings.filterwarnings("ignore")
+warnings.filterwarnings('ignore')
 
-#1. 데이터
+
 csv_path = 'C:\\_data\\kaggle\\obesity\\'
 
 train_csv = pd.read_csv(csv_path + "train.csv", index_col=0)
@@ -30,7 +21,8 @@ x_pred = test_csv.copy()
 columns_to_drop = ['NObeyesdad']
 x = xy.drop(columns=columns_to_drop)
 y = xy[columns_to_drop]
-
+# print(x.shape)  #(20758, 16)
+# print(y.shape)    #(20758, 1)
 non_float_x = []
 for col in x.columns:
     if x[col].dtype != 'float64':
@@ -56,7 +48,9 @@ for column in x.columns:
         encoder = LabelEncoder()
         x[column] = encoder.fit_transform(x[column])
         x_pred[column] = encoder.transform(x_pred[column])
-            
+    
+
+        
 for col in x.columns :
     if x[col].dtype != 'float32':
         x[col] = x[col].astype('float32')
@@ -67,3 +61,7 @@ for col in x.columns :
 
 encoder = LabelEncoder()
 y = encoder.fit_transform(y)
+
+sns.set(font_scale=0.8)
+sns.heatmap(data=x.corr(), square=True, annot=True, cbar=True)
+plt.show()
