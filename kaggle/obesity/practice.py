@@ -80,14 +80,27 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 x_pred = scaler.transform(x_pred)
 
+# parameters = {
+#     'learning_rate': [0.01, 0.1, 0.3, 0.5, 0.2],
+#     'max_depth': [3, 5, 7, 9],
+#     'min_child_weight': [1, 3, 5, 2, 4],
+#     'subsample': [0.6, 0.8, 1.0, 0.7, 0.9],
+#     'colsample_bytree': [0.6, 0.8, 1.0, 0.7, 0.9],
+#     'gamma': [0, 0.1, 0.2],
+#     'n_estimators': [100, 200, 300]
+# }
+
 parameters = {
-    'learning_rate': [0.01, 0.1, 0.3, 0.5, 0.2],
-    'max_depth': [3, 5, 7, 9],
-    'min_child_weight': [1, 3, 5, 2, 4],
-    'subsample': [0.6, 0.8, 1.0, 0.7, 0.9],
-    'colsample_bytree': [0.6, 0.8, 1.0, 0.7, 0.9],
-    'gamma': [0, 0.1, 0.2],
-    'n_estimators': [100, 200, 300]
+    'max_depth': [3, 4, 5, 6],                 # 트리의 최대 깊이
+    'learning_rate': [0.01, 0.05, 0.1, 0.3],   # 학습률
+    'n_estimators': [100, 200, 300],           # 생성할 결정 트리의 개수
+    'min_child_weight': [1, 3, 5],             # 리프 노드의 최소 자식 노드 가중치 합
+    'gamma': [0, 0.1, 0.2],                    # 트리의 리프 노드를 추가적으로 나눌지를 결정하는 값
+    'subsample': [0.6, 0.7, 0.8, 0.9, 1.0],    # 각 트리를 구성할 때 사용할 샘플링 비율
+    'colsample_bytree': [0.6, 0.7, 0.8, 0.9, 1.0],  # 트리를 구성할 때 사용할 특성 샘플링 비율
+    'reg_alpha': [0, 0.1, 0.5, 1.0],           # L1 정규화 파라미터
+    'reg_lambda': [0, 0.1, 0.5, 1.0],          # L2 정규화 파라미터
+    'scale_pos_weight': [1, 2, 3]              # 양성 클래스에 대한 가중치
 }
 
 n_splits = 5
