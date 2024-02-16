@@ -14,6 +14,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from xgboost import XGBClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 #1.
 datasets = load_wine()
@@ -30,11 +31,13 @@ scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
-for i in range(1, x_train.shape[1] + 1):
+n_features = len(np.unique(y))
+
+for i in range(1, n_features):
     
-    pca = PCA(n_components=i)   
-    x1 = pca.fit_transform(x_train)
-    x2 = pca.transform(x_test)
+    lda = LinearDiscriminantAnalysis(n_components=i)   
+    x1 = lda.fit_transform(x_train, y_train)
+    x2 = lda.transform(x_test)
 
     # #3.
     model.fit(x1, y_train)
@@ -43,7 +46,7 @@ for i in range(1, x_train.shape[1] + 1):
     results = model.score(x2, y_test)
     print(x1.shape)
     print(f"model.score : {results}")
-    evr = pca.explained_variance_ratio_
+    evr = lda.explained_variance_ratio_
     evr_cumsum = np.cumsum(evr)
     print(evr_cumsum)
     
@@ -73,3 +76,11 @@ for i in range(1, x_train.shape[1] + 1):
 # model.score : 0.9444444444444444
 # (142, 13)
 # model.score : 0.9444444444444444
+
+#
+# (142, 1)
+# model.score : 0.9166666666666666
+# [0.72153931]
+# (142, 2)
+# model.score : 0.9722222222222222
+# [0.72153931 1.        ]

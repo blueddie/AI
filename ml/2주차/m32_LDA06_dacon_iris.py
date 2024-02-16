@@ -15,6 +15,9 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from xgboost import XGBClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+
 #1.
 path = "C://_data//dacon//iris//"
 
@@ -29,7 +32,7 @@ y = train_csv['species']
 # print(y.shape)  #(120,)
 print(pd.value_counts(y))
 
-
+n_features = len(np.unique(y))
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=13, train_size=0.8, stratify=y)
 
@@ -40,11 +43,11 @@ scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
-for i in range(1, x_train.shape[1] + 1):
+for i in range(1, n_features):
     
-    pca = PCA(n_components=i)   
-    x1 = pca.fit_transform(x_train)
-    x2 = pca.transform(x_test)
+    lda = LinearDiscriminantAnalysis(n_components=i)   
+    x1 = lda.fit_transform(x_train, y_train)
+    x2 = lda.transform(x_test)
 
     # #3.
     model.fit(x1, y_train)
@@ -53,7 +56,7 @@ for i in range(1, x_train.shape[1] + 1):
     results = model.score(x2, y_test)
     print(x1.shape)
     print(f"model.score : {results}")
-    evr = pca.explained_variance_ratio_
+    evr = lda.explained_variance_ratio_
     evr_cumsum = np.cumsum(evr)
     print(evr_cumsum)
 
@@ -69,3 +72,11 @@ for i in range(1, x_train.shape[1] + 1):
 # (96, 4)
 # model.score : 1.0
 # [0.73127212 0.95807857 0.99495539 1.        ]
+
+# LDA
+# (96, 1)
+# model.score : 1.0
+# [0.99208565]
+# (96, 2)
+# model.score : 0.9583333333333334
+# [0.99208565 1.        ]

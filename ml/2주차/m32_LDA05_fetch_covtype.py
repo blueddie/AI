@@ -15,6 +15,9 @@ from xgboost import XGBClassifier
 from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+
 #1
 datasets = fetch_covtype()
 
@@ -38,11 +41,13 @@ scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
-for i in range(1, x_train.shape[1] + 1):
+n_features = len(np.unique(y))
+
+for i in range(1, n_features):
     
-    pca = PCA(n_components=i)   
-    x1 = pca.fit_transform(x_train)
-    x2 = pca.transform(x_test)
+    lda = LinearDiscriminantAnalysis(n_components=i)   
+    x1 = lda.fit_transform(x_train, y_train)
+    x2 = lda.transform(x_test)
 
     # #3.
     model.fit(x1, y_train)
@@ -51,6 +56,6 @@ for i in range(1, x_train.shape[1] + 1):
     results = model.score(x2, y_test)
     print(x1.shape)
     print(f"model.score : {results}")
-    evr = pca.explained_variance_ratio_
+    evr = lda.explained_variance_ratio_
     evr_cumsum = np.cumsum(evr)
     print(evr_cumsum)

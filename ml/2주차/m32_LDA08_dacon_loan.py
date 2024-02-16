@@ -21,6 +21,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from xgboost import XGBClassifier
 from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+
+
 csv_path = "C:\\_data\\dacon\\loan_grade\\"
 
 train_csv = pd.read_csv(csv_path + "train.csv", index_col=0)
@@ -94,6 +98,8 @@ y = xy['대출등급']
 encoder = LabelEncoder()
 y = encoder.fit_transform(y)
 
+n_features = len(np.unique(y))
+
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=3, train_size=0.8, stratify=y)
 
@@ -104,11 +110,11 @@ scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
-for i in range(1, x_train.shape[1] + 1):
+for i in range(1, n_features):
     
-    pca = PCA(n_components=i)   
-    x1 = pca.fit_transform(x_train)
-    x2 = pca.transform(x_test)
+    lda = LinearDiscriminantAnalysis(n_components=i)   
+    x1 = lda.fit_transform(x_train, y_train)
+    x2 = lda.transform(x_test)
 
     # #3.
     model.fit(x1, y_train)
@@ -117,7 +123,7 @@ for i in range(1, x_train.shape[1] + 1):
     results = model.score(x2, y_test)
     print(x1.shape)
     print(f"model.score : {results}")
-    evr = pca.explained_variance_ratio_
+    evr = lda.explained_variance_ratio_
     evr_cumsum = np.cumsum(evr)
     print(evr_cumsum)
 
@@ -191,3 +197,23 @@ for i in range(1, x_train.shape[1] + 1):
 # [0.18053748 0.27978325 0.36749096 0.45141761 0.52947407 0.60687431        # 제일 좋음
 #  0.68224219 0.75515354 0.82182218 0.88599649 0.94347893 0.97325268 
 # 1.]
+
+# LDA
+# (77035, 1)
+# model.score : 0.32551015109818787
+# [0.96161115]
+# (77035, 2)
+# model.score : 0.4023054156498261
+# [0.96161115 0.99294566]
+# (77035, 3)
+# model.score : 0.464302404070824
+# [0.96161115 0.99294566 0.99901756]
+# (77035, 4)
+# model.score : 0.47691988161379095
+# [0.96161115 0.99294566 0.99901756 0.99960934]
+# (77035, 5)
+# model.score : 0.5119684303442547
+# [0.96161115 0.99294566 0.99901756 0.99960934 0.99986577]
+# (77035, 6)
+# model.score : 0.5195493016252142
+# [0.96161115 0.99294566 0.99901756 0.99960934 0.99986577 1.        ]

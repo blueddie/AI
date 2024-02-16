@@ -12,8 +12,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from xgboost import XGBClassifier
-from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 
 #1. 데이터
@@ -21,6 +21,8 @@ datasets = load_breast_cancer()
 
 X = datasets.data
 y = datasets.target
+
+label_counts = len(np.unique(y))
 
 x_train, x_test, y_train, y_test = train_test_split(X, y, random_state=53, train_size=0.8, stratify=y)
 
@@ -31,11 +33,12 @@ scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
-for i in range(1, x_train.shape[1] + 1):
+
+for i in range(1, label_counts):
     
-    pca = PCA(n_components=i)   
-    x1 = pca.fit_transform(x_train)
-    x2 = pca.transform(x_test)
+    lda = LinearDiscriminantAnalysis(n_components=i)   
+    x1 = lda.fit_transform(x_train, y_train)
+    x2 = lda.transform(x_test)
 
     # #3.
     model.fit(x1, y_train)
@@ -44,7 +47,7 @@ for i in range(1, x_train.shape[1] + 1):
     results = model.score(x2, y_test)
     print(x1.shape)
     print(f"model.score : {results}")
-    evr = pca.explained_variance_ratio_
+    evr = lda.explained_variance_ratio_
     evr_cumsum = np.cumsum(evr)
     print(evr_cumsum)
     
@@ -117,3 +120,7 @@ for i in range(1, x_train.shape[1] + 1):
 #  0.99945557 0.99971641 0.9999283  0.99997239 0.99999583 1.        ]
 
 # 0.99672627 제일 좋음
+
+# lDA
+# (455, 1)
+# model.score : 0.9473684210526315
