@@ -1,3 +1,4 @@
+# https://dacon.io/competitions/official/236214/mysubmission
 import numpy as np
 import pandas as pd
 from keras.models import Sequential
