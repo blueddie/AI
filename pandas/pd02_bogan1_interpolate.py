@@ -8,7 +8,7 @@
     앞 값 : ffill
     뒷 값 : bfill
     특정 값 : 777 (뭔가 조건을 같이 넣는 게 좋겠지?)
-3. 보간 :  interplate
+3. 보간 :  interpolate
 4. 모델 : predict
 5. 부스팅 계열 :  통상 결측치 이상치에 대해 자유롭다.
 
