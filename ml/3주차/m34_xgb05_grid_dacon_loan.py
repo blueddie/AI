@@ -88,6 +88,8 @@ test_csv['근로기간'] = lae.transform(test_csv['근로기간'])
 X = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
 
+lae = LabelEncoder()
+y = lae.fit_transform(y)
 
 n_splits= 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
@@ -130,6 +132,7 @@ parameters = {
 xgb = XGBClassifier(random_state=seed)
 model = RandomizedSearchCV(xgb, parameters, cv=kfold, verbose=1
                      , random_state=seed
+                     , n_iter=20
                      , n_jobs=22)
 
 
@@ -172,3 +175,10 @@ print("걸린시간 : ", round(end_time - start_time, 2), "초")
 # accuracy_score :  0.8089996538594669
 # 최적튠 ACC :  0.8089996538594669
 # 걸린시간 :  24.67 초
+
+# 최적의 파라미터 :  {'subsample': 1, 'reg_lambda': 1, 'reg_alpha': 0, 'n_estimators': 300, 'min_child_weight': 0, 'max_depth': 5, 'learning_rate': 0.5, 'gamma': 1, 'colsample_bytree': 1, 'colsample_bynode': 0.5, 'colsample_bylevel': 0.7}
+# best_score :  0.8224169081916655
+# model.score :  0.8276220145379024
+# accuracy_score :  0.8276220145379024
+# 최적튠 ACC :  0.8276220145379024
+# 걸린시간 :  69.58 초

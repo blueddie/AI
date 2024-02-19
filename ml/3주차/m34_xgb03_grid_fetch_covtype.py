@@ -6,7 +6,7 @@ from keras.layers import Dense
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from keras.utils import to_categorical
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from keras. callbacks import EarlyStopping
 from sklearn.svm import LinearSVC
 import warnings
@@ -30,6 +30,8 @@ datasets = fetch_covtype()
 X = datasets.data
 y = datasets.target
 
+lae = LabelEncoder()
+y = lae.fit_transform(y)
 
 n_splits= 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)

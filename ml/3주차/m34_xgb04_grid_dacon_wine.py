@@ -42,6 +42,10 @@ test_csv['type'] = lae.transform(test_csv['type'])
 X = train_csv.drop(['quality'], axis=1)
 
 y = train_csv['quality']
+
+lae =  LabelEncoder()
+y = lae.fit_transform(y)
+
 n_splits= 5
 kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
@@ -67,6 +71,7 @@ parameters = {
 xgb = XGBClassifier(random_state=seed)
 model = RandomizedSearchCV(xgb, parameters, cv=kfold, verbose=1
                            , random_state=seed
+                           , n_iter=30
                            , n_jobs=22)
 
 
@@ -110,3 +115,10 @@ print("걸린시간 : ", round(end_time - start_time, 2), "초")
 # accuracy_score :  0.6818181818181818
 # 최적튠 ACC :  0.6818181818181818
 # 걸린시간 :  4.6 초
+#------------------------------------------------------------------
+# 최적의 파라미터 :  {'subsample': 0.7, 'reg_lambda': 0, 'reg_alpha': 0, 'n_estimators': 500, 'min_child_weight': 0.5, 'max_depth': 8, 'learning_rate': 0.1, 'gamma': 0, 'colsample_bytree': 1, 'colsample_bynode': 1, 'colsample_bylevel': 0.5}
+# best_score :  0.6519093870964447
+# model.score :  0.6818181818181818
+# accuracy_score :  0.6818181818181818
+# 최적튠 ACC :  0.6818181818181818
+# 걸린시간 :  11.22 초
