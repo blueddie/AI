@@ -77,5 +77,10 @@ print(f"최상의 매개변수 : {model.best_estimator_}")
 print(f"최상의 매개변수 : {model.best_params_}")
 print(f"최상의 훈련 점수 : {model.best_score_}")
 
-results = model.score(x_test, y_test)
+results = model.best_estimator_.score(x_test, y_test)
 print(f"최종 점수 : {results}")
+
+# 최상의 매개변수 : {'subsample': 0.5, 'reg_lambda': 0.1, 'reg_alpha': 1, 'n_estimators': 300, 'min_child_weight': 1, 'max_depth': 4, 'learning_rate': 0.1, 'gamma': 0, 'colsample_bytree': 0.7, 'colsample_bynode': 0.5, 'colsample_bylevel': 0.5}
+# 최상의 훈련 점수 : 0.9736263736263737
+# 최종 점수 : 0.9912280701754386
+

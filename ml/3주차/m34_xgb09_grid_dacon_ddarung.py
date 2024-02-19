@@ -18,10 +18,12 @@ import warnings
 from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import time
+from xgboost import XGBRegressor
 from sklearn.ensemble import RandomForestRegressor
 
 warnings.filterwarnings ('ignore')
 
+seed = 777
 
 # 1.데이터
 
@@ -48,24 +50,30 @@ test_csv = test_csv.fillna(test_csv.mean())
 X = train_csv.drop(['count'], axis=1)
 y = train_csv['count']
 n_splits= 5
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, shuffle=True, random_state=713)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, shuffle=True, random_state=seed)
 
-parameters = [
-    {'n_estimators': [100,200], 'max_depth': [6,10,12],
-     'min_samples_leaf' : [3, 10]},
-    {'max_depth' : [6, 8, 10, 12], 'min_samples_leaf' : [3, 5, 7, 10]},
-    {'min_samples_leaf' : [3, 5, 7, 10],
-     'min_samples_split' : [2, 3, 5, 10]},
-    {'min_samples_split' : [2, 3, 5,10]},
-    {'n_jobs' : [-1, 10, 20], 'min_samples_split' : [2, 3, 5, 10]}   
-]
+parameters = {
+    'n_estimators' : [100, 300, 500],
+    'learning_rate' : [0.01, 0.1, 0.5],
+    'max_depth' : [3, 4, 5, 6, 7, 8],
+    'gamma' : [0, 1, 2, 3],
+    'min_child_weight' : [0, 0.1, 0.5, 1],
+    'subsample' : [0.5, 0.7, 1],
+    'colsample_bytree' : [0.5, 0.7, 1],
+    'colsample_bylevel' : [0.5, 0.7, 1],
+    'colsample_bynode' : [0.5, 0.7, 1],
+    'reg_alpha' : [0, 0.1, 0.5, 1],
+    'reg_lambda' : [0, 0.1, 0.5, 1]
+}
 
  #2. 모델 구성
-model = RandomizedSearchCV(RandomForestRegressor(), parameters, cv=kfold, verbose=1,
-                    # refit = True,     # default
-                    #  n_jobs=-1
+xgb = XGBRegressor(random_state=seed)
+model = RandomizedSearchCV(xgb, parameters, cv=kfold
+                           , verbose=1
+                           , n_jobs=22
+                           , n_iter=20
                      )
 
 
@@ -74,24 +82,40 @@ start_time = time.time()
 model.fit(X_train, y_train)
 end_time = time.time()
 print("최적의 매개변수 : ", model.best_estimator_)
-# 최적의 매개변수 :  SVC(C=1, kernel='linear')
-
 print("최적의 파라미터 : ", model.best_params_)
-# 최적의 파라미터 :  {'C': 1, 'degree': 3, 'kernel': 'linear'}
 
 print('best_score : ', model.best_score_)
 print('model.score : ', model.score(X_test, y_test))
-# results = model.score(X_test, y_test)
-# print(results)
+
 y_predict = model.predict(X_test)
-acc = accuracy_score(y_test, y_predict)
-print("accuracy_score : ", acc)
+r2 = r2_score(y_test, y_predict)
+print("r2 score : ", r2)
 
 y_pred_best = model.best_estimator_.predict(X_test)
-print("최적튠 ACC : " , accuracy_score(y_test, y_pred_best))
-# best_score :  0.975 
-# model.score :  0.9333333333333333
+print("최적튠 r2 : " , r2_score(y_test, y_pred_best))
+
 print("걸린시간 : ", round(end_time - start_time, 2), "초")
 
-# best_score :  0.7791705364063007
-# model.score :  0.8707761578141365
+def RMSE(y_test, y_predict) :
+    rmse = np.sqrt(mean_squared_error(y_test, y_predict))
+    return rmse
+
+rmse = RMSE(y_test, y_predict)
+print("rmse : ", rmse)
+
+y_submit = model.predict(test_csv)
+submission_csv['count'] = y_submit
+
+submission_csv.to_csv(path + str(round(rmse, 3)) + ".csv", index=False)
+
+
+# 최적의 파라미터 :  {'subsample': 1, 'reg_lambda': 1, 'reg_alpha': 0, 'n_estimators': 500, 'min_child_weight': 0.1, 'max_depth': 6
+# , 'learning_rate': 0.1, 'gamma': 2, 'colsample_bytree': 1, 'colsample_bynode': 0.7, 'colsample_bylevel': 1}
+# best_score :  0.783459730861022
+# model.score :  0.7545349292921728
+# r2 score :  0.7545349292921728
+# 최적튠 r2 :  0.7545349292921728
+# 걸린시간 :  2.88 초
+# rmse :  38.1520340035067
+
+

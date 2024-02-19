@@ -77,20 +77,13 @@ start_time = time.time()
 model.fit(x_train, y_train)
 end_time = time.time()
 
-print("최적의 매개변수 : ", model.best_estimator_)
-print("최적의 파라미터 : ", model.best_params_)
+#4 평가, 예측
+print(f"최상의 매개변수 : {model.best_estimator_}")
+print(f"최상의 매개변수 : {model.best_params_}")
+print(f"최상의 훈련 점수 : {model.best_score_}")
 
-print('best_score : ', model.best_score_)
-print('model.score : ', model.score(x_test, y_test))
-
-y_predict = model.predict(x_test)
-acc = accuracy_score(y_test, y_predict)
-print("accuracy_score : ", acc)
-
-y_pred_best = model.best_estimator_.predict(x_test)
-print("최적튠 ACC : " , accuracy_score(y_test, y_pred_best))
-
-print("걸린시간 : ", round(end_time - start_time, 2), "초")
+results = model.score(x_test, y_test)
+print(f"최종 점수 : {results}")
 
 # 그리드서치
 # 최적의 매개변수 :  RandomForestClassifier(min_samples_split=3, n_jobs=10)
@@ -120,3 +113,7 @@ print("걸린시간 : ", round(end_time - start_time, 2), "초")
 # accuracy_score :  0.9805555555555555
 # 최적튠 ACC :  0.9805555555555555
 # 걸린시간 :  6.85 초
+
+# 최상의 매개변수 : {'subsample': 0.7, 'reg_lambda': 0, 'reg_alpha': 0, 'n_estimators': 500, 'min_child_weight': 0.5, 'max_depth': 8, 'learning_rate': 0.1, 'gamma': 0, 'colsample_bytree': 1, 'colsample_bynode': 1, 'colsample_bylevel': 0.5}
+# 최상의 훈련 점수 : 0.9714769647696478
+# 최종 점수 : 0.9805555555555555

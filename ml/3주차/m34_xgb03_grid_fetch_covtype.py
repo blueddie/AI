@@ -85,3 +85,11 @@ print("최적튠 ACC : " , accuracy_score(y_test, y_pred_best))
 # best_score :  0.975 
 # model.score :  0.9333333333333333
 print("걸린시간 : ", round(end_time - start_time, 2), "초")
+
+
+# 최적의 파라미터 :  {'subsample': 0.7, 'reg_lambda': 0, 'reg_alpha': 0, 'n_estimators': 500, 'min_child_weight': 0.5, 'max_depth': 8, 'learning_rate': 0.1, 'gamma': 0, 'colsample_bytree': 1, 'colsample_bynode': 1, 'colsample_bylevel': 0.5}
+# best_score :  0.9429825400164464
+# model.score :  0.9460947988021067
+# accuracy_score :  0.9460947988021067
+# 최적튠 ACC :  0.9460947988021067
+# 걸린시간 :  1635.24 초

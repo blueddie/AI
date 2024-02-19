@@ -15,34 +15,44 @@ from sklearn.utils import all_estimators
 from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import time
+from xgboost import XGBRegressor
 from sklearn.ensemble import RandomForestRegressor
 
 import warnings
 warnings.filterwarnings ('ignore')
 
+seed = 777
+
 datasets = fetch_california_housing()
 X = datasets.data
 y = datasets.target
 n_splits= 5
-kfold = KFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = KFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True, random_state=seed)
 
 
-parameters = [
-    {'n_estimators': [100,200], 'max_depth': [6,10,12],
-     'min_samples_leaf' : [3, 10]},
-    {'max_depth' : [6, 8, 10, 12], 'min_samples_leaf' : [3, 5, 7, 10]},
-    {'min_samples_leaf' : [3, 5, 7, 10],
-     'min_samples_split' : [2, 3, 5, 10]},
-    {'min_samples_split' : [2, 3, 5,10]},
-    {'n_jobs' : [-1, 10, 20], 'min_samples_split' : [2, 3, 5, 10]}   
-]
+parameters = {
+    'n_estimators' : [100, 300, 500],
+    'learning_rate' : [0.01, 0.1, 0.5],
+    'max_depth' : [3, 4, 5, 6, 7, 8],
+    'gamma' : [0, 1, 2, 3],
+    'min_child_weight' : [0, 0.1, 0.5, 1],
+    'subsample' : [0.5, 0.7, 1],
+    'colsample_bytree' : [0.5, 0.7, 1],
+    'colsample_bylevel' : [0.5, 0.7, 1],
+    'colsample_bynode' : [0.5, 0.7, 1],
+    'reg_alpha' : [0, 0.1, 0.5, 1],
+    'reg_lambda' : [0, 0.1, 0.5, 1]
+}
 
  #2. 모델 구성
-model = RandomizedSearchCV(RandomForestRegressor(), parameters, cv=kfold, verbose=1,
-                    # refit = True,     # default
-                     n_jobs=-1)
+xgb = XGBRegressor(random_state=seed)
+model = RandomizedSearchCV(xgb, parameters, cv=kfold, verbose=1
+                           , n_jobs=22
+                           , n_iter=20
+                           
+                           )
 
 
 
@@ -72,3 +82,11 @@ print("걸린시간 : ", round(end_time - start_time, 2), "초")
 # r2 score :  0.8050928958570419
 # 최적튠 r2 :  0.8050928958570419
 # 걸린시간 :  15.44 초
+
+# 최적의 파라미터 :  {'subsample': 1, 'reg_lambda': 0, 'reg_alpha': 0.1, 'n_estimators': 500, 'min_child_weight': 0, 'max_depth': 7
+# , 'learning_rate': 0.01, 'gamma': 1, 'colsample_bytree': 1, 'colsample_bynode': 0.5, 'colsample_bylevel': 1}
+# best_score :  0.822171622656923
+# model.score :  0.8273945793319387
+# r2 score :  0.8273945793319387
+# 최적튠 r2 :  0.8273945793319387
+# 걸린시간 :  6.51 초

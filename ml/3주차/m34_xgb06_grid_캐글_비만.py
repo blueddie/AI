@@ -15,7 +15,7 @@ from sklearn.preprocessing import StandardScaler, RobustScaler
 
 warnings.filterwarnings("ignore")
 
-seed = 777
+seed = 10404
 
 def outlierHandler(data, labels):
     data = pd.DataFrame(data)
@@ -108,13 +108,17 @@ y = encoder.fit_transform(y)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=seed, stratify=y)
 
 parameters = {
-    'learning_rate': [0.01, 0.1, 0.3],
-    'max_depth': [3, 5, 7],
-    'min_child_weight': [1, 3, 5],
-    'subsample': [0.6, 0.8, 1.0],
-    'colsample_bytree': [0.6, 0.8, 1.0],
-    'gamma': [0, 0.1, 0.2],
-    'n_estimators': [100, 200, 300]
+    'n_estimators' : [100, 300, 500],
+    'learning_rate' : [0.01, 0.1, 0.5],
+    'max_depth' : [3, 4, 5, 6, 7, 8],
+    'gamma' : [0, 1, 2, 3],
+    'min_child_weight' : [0, 0.1, 0.5, 1],
+    'subsample' : [0.5, 0.7, 1],
+    'colsample_bytree' : [0.5, 0.7, 1],
+    'colsample_bylevel' : [0.5, 0.7, 1],
+    'colsample_bynode' : [0.5, 0.7, 1],
+    'reg_alpha' : [0, 0.1, 0.5, 1],
+    'reg_lambda' : [0, 0.1, 0.5, 1]
 }
 
 scaler = StandardScaler()
@@ -134,7 +138,7 @@ model = RandomizedSearchCV(xgb
                      , verbose=1
                      , refit=True
                      , n_jobs=22
-                     , n_iter=30
+                     , n_iter=40
                      , random_state=seed
                      )
 
@@ -170,4 +174,24 @@ date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053
 submission_csv['NObeyesdad'] = pd.DataFrame(y_submit.reshape(-1,1))
 submission_csv.to_csv(csv_path + f"{date}_{model.__class__.__name__}_acc_{results:.4f}.csv", index=False)
 print(results)
+
+# seed = 1004
+# 최적의 파라미터 :  {'subsample': 1, 'reg_lambda': 1, 'reg_alpha': 0.1, 'n_estimators': 100, 'min_child_weight': 1
+#              , 'max_depth': 7, 'learning_rate': 0.1, 'gamma': 1, 'colsample_bytree': 0.7, 'colsample_bynode': 1, 'colsample_bylevel': 0.7}
+# best_score :  0.8981089453011059
+# model.score :  0.9007707129094412
+# accuracy_score :  0.9007707129094412
+# 최적튠 ACC :  0.9007707129094412
+# 걸린시간 :  28.87 초
+# 0.9007707129094412
+
+# seed = 10404
+# 최적의 파라미터 :  {'subsample': 0.5, 'reg_lambda': 1, 'reg_alpha': 0.5, 'n_estimators': 100, 'min_child_weight': 0, 'max_depth': 8
+#              , 'learning_rate': 0.1, 'gamma': 0, 'colsample_bytree': 0.7, 'colsample_bynode': 1, 'colsample_bylevel': 1}
+# best_score :  0.9011199052387875
+# model.score :  0.901252408477842
+# accuracy_score :  0.901252408477842
+# 최적튠 ACC :  0.901252408477842
+# 걸린시간 :  36.14 초
+# 0.901252408477842
 
