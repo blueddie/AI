@@ -44,29 +44,41 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 #     , 'max_depth' : [2, 3, 5, 7, 8]
 #     , 'gamma' : [0, 1, 2]
 # }
+# parameters = {
+#     'n_estimators' : [100, 300, 500],
+#     'learning_rate' : [0.01, 0.1, 0.5],
+#     'max_depth' : [3, 4, 5, 6, 7, 8],
+#     'gamma' : [0, 1, 2, 3],
+#     'min_child_weight' : [0, 0.1, 0.5, 1],
+#     'subsample' : [0.5, 0.7, 1],
+#     'colsample_bytree' : [0.5, 0.7, 1],
+#     'colsample_bylevel' : [0.5, 0.7, 1],
+#     'colsample_bynode' : [0.5, 0.7, 1],
+#     'reg_alpha' : [0, 0.1, 0.5, 1],
+#     'reg_lambda' : [0, 0.1, 0.5, 1]
+# }
 parameters = {
     'n_estimators' : [100, 300, 500],
-    'learning_rate' : [0.01, 0.1, 0.5],
-    'max_depth' : [3, 4, 5, 6, 7, 8],
-    'gamma' : [0, 1, 2, 3],
+    'learning_rate' : [0.05],
+    'max_depth' : [3, 4, 5, 8],
+    'gamma' : [0, 1],
     'min_child_weight' : [0, 0.1, 0.5, 1],
-    'subsample' : [0.5, 0.7, 1],
-    'colsample_bytree' : [0.5, 0.7, 1],
-    'colsample_bylevel' : [0.5, 0.7, 1],
-    'colsample_bynode' : [0.5, 0.7, 1],
-    'reg_alpha' : [0, 0.1, 0.5, 1],
-    'reg_lambda' : [0, 0.1, 0.5, 1]
+    'subsample' : [1, 0.5],
+    'colsample_bytree' : [0.7],
+    'colsample_bylevel' : [0.5],
+    'colsample_bynode' : [0.5],
+    'reg_alpha' : [1],
+    'reg_lambda' : [1]
 }
-
 
 
 xgb = XGBClassifier(random_state=777)
 
-model = RandomizedSearchCV(xgb, parameters, cv=kfold
+model = GridSearchCV(xgb, parameters, cv=kfold
                            , n_jobs=22
-                           , random_state=seed
+                        #    , random_state=seed
                            , verbose=1
-                           , n_iter=20 
+                        #    , n_iter=20 
                            )
 
 #3 훈련
@@ -80,7 +92,8 @@ print(f"최상의 훈련 점수 : {model.best_score_}")
 results = model.best_estimator_.score(x_test, y_test)
 print(f"최종 점수 : {results}")
 
-# 최상의 매개변수 : {'subsample': 0.5, 'reg_lambda': 0.1, 'reg_alpha': 1, 'n_estimators': 300, 'min_child_weight': 1, 'max_depth': 4, 'learning_rate': 0.1, 'gamma': 0, 'colsample_bytree': 0.7, 'colsample_bynode': 0.5, 'colsample_bylevel': 0.5}
+# 최상의 매개변수 : {'subsample': 0.5, 'reg_lambda': 0.1, 'reg_alpha': 1, 'n_estimators': 300, 'min_child_weight': 1, 'max_depth': 4, 'learning_rate': 0.1
+# , 'gamma': 0, 'colsample_bytree': 0.7, 'colsample_bynode': 0.5, 'colsample_bylevel': 0.5}
 # 최상의 훈련 점수 : 0.9736263736263737
 # 최종 점수 : 0.9912280701754386
 
