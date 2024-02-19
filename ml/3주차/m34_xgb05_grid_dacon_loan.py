@@ -128,9 +128,9 @@ parameters = {
 
  #2. 모델 구성
 xgb = XGBClassifier(random_state=seed)
-model = GridSearchCV(xgb(), parameters, cv=kfold, verbose=1,
-                    # refit = True,     # default
-                     n_jobs=22)
+model = RandomizedSearchCV(xgb, parameters, cv=kfold, verbose=1
+                     , random_state=seed
+                     , n_jobs=22)
 
 
 

@@ -53,7 +53,7 @@ parameters = {
 
  #2. 모델 구성
 xgb = XGBClassifier(random_state=seed)
-model = RandomizedSearchCV(xgb(), parameters, cv=kfold, verbose=1
+model = RandomizedSearchCV(xgb, parameters, cv=kfold, verbose=1
                            , n_jobs=22
                            , n_iter=20
                            , random_state=seed

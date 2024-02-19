@@ -15,6 +15,8 @@ from sklearn.preprocessing import StandardScaler, RobustScaler
 
 warnings.filterwarnings("ignore")
 
+seed = 777
+
 def outlierHandler(data, labels):
     data = pd.DataFrame(data)
     
@@ -103,7 +105,7 @@ for col in x.columns :
 encoder = LabelEncoder()
 y = encoder.fit_transform(y)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=6611, stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=seed, stratify=y)
 
 parameters = {
     'learning_rate': [0.01, 0.1, 0.3],
@@ -122,17 +124,18 @@ x_test = scaler.transform(x_test)
 x_pred = scaler.transform(x_pred)
 
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=8663)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
 #2 모델
-model = RandomizedSearchCV(XGBClassifier()
+xgb = XGBClassifier(random_state=seed)
+model = RandomizedSearchCV(XGBClassifier
                      , parameters
                      , cv=kfold
                      , verbose=1
                      , refit=True
                      , n_jobs=-1
                      , n_iter=30
-                     , random_state=42
+                     , random_state=seed
                      )
 
 #3 훈련
