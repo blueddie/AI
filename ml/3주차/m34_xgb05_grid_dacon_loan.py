@@ -23,10 +23,11 @@ import warnings
 from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.ensemble import RandomForestClassifier
 import time
+from xgboost import XGBClassifier
 
 warnings.filterwarnings ('ignore')
 
-
+seed = 777
 
 # def save_code_to_file(filename=None):
 # if filename is None:
@@ -86,10 +87,12 @@ test_csv['근로기간'] = lae.transform(test_csv['근로기간'])
 
 X = train_csv.drop(['대출등급'], axis=1)
 y = train_csv['대출등급']
-n_splits= 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True, random_state=42, stratify=y)
+
+n_splits= 5
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15, shuffle=True, random_state=seed, stratify=y)
 
 mms = MinMaxScaler()
 mms.fit(X_train)
@@ -109,20 +112,25 @@ test_csv = mms.transform(test_csv)
 #     {'n_jobs' : [-1, 10, 20], 'min_samples_split' : [2, 3, 5, 10]}   
 # ]
 
-parameters = [
-    {'n_estimators': [100,200], 'max_depth': [6,10,12],
-     'min_samples_leaf' : [3, 10]},
-    {'max_depth' : [6, 8, 10, 12], 'min_samples_leaf' : [3, 5, 7, 10]},
-    {'min_samples_leaf' : [3, 5, 7, 10],
-     'min_samples_split' : [2, 3, 5, 10]},
-    {'min_samples_split' : [2, 3, 5,10]},
-    {'n_jobs' : [-1, 10, 20], 'min_samples_split' : [2, 3, 5, 10]}   
-]
+parameters = {
+    'n_estimators' : [100, 300, 500],
+    'learning_rate' : [0.01, 0.1, 0.5],
+    'max_depth' : [3, 4, 5, 6, 7, 8],
+    'gamma' : [0, 1, 2, 3],
+    'min_child_weight' : [0, 0.1, 0.5, 1],
+    'subsample' : [0.5, 0.7, 1],
+    'colsample_bytree' : [0.5, 0.7, 1],
+    'colsample_bylevel' : [0.5, 0.7, 1],
+    'colsample_bynode' : [0.5, 0.7, 1],
+    'reg_alpha' : [0, 0.1, 0.5, 1],
+    'reg_lambda' : [0, 0.1, 0.5, 1]
+}
 
  #2. 모델 구성
-model = RandomizedSearchCV(RandomForestClassifier(), parameters, cv=kfold, verbose=1, random_state=42, n_iter=20,
+xgb = XGBClassifier(random_state=seed)
+model = GridSearchCV(xgb(), parameters, cv=kfold, verbose=1,
                     # refit = True,     # default
-                     n_jobs=-1)
+                     n_jobs=22)
 
 
 

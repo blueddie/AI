@@ -45,18 +45,17 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 #     , 'gamma' : [0, 1, 2]
 # }
 parameters = {
-    'n_estimators' : [100, 200, 300, 400, 500, 1000] # 디폴트 100/ 1 ~ inf / 정수
-    , 'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1, 0.01, 0.001]  # 디폴트 0.3 / 0 ~ 1 /  eta / 엄청 중요 ~!~!~!~!!~~!~!~!~!! 통상적으로 작으면 작을 수록 성능이 좋다.
-    , 'max_depth' : [None, 2, 3, 4, 5, 6, 7, 8, 9, 10] # 디폴트 6 /  0 ~ inf / 정수
-    , 'gamma' : [0, 1, 2, 3, 4, 5, 7, 10, 100]    # 디폴트 0 / 0 ~ inf
-    , 'min_child_weight' : [0, 0.01, 0.001, 0.1, 0.5, 1, 5, 10,  100] # 디폴트 1  / 0 ~ inf
-    , 'subsampe' : [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1] # 디폴트 1 / 0 ~ 1
-    , 'colsample_bytree' : [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1] # 디폴트 1 / 0 ~ 1
-    , 'colsample_bylevel' : [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1] # 디폴트 1 / 0 ~ 1
-    , 'colsample_bynode' : [0, 0.1, 0.2, 0.3, 0.5, 0.7, 1] # 디폴트 1 / 0 ~ 1
-    , 'reg_alpha' : [0, 0.1, 0.01, 0.001, 1, 2, 10]   # 디폴트 0 / 0 ~ inf / L1 절대값 가중치 규제 / alpha
-    , 'reg_lambda' : [0, 0.1, 0.01, 0.001, 1, 2, 10]   # 디폴트 0 / 0 ~ inf / L2 제곱 가중치 규제 / lambda
-    
+    'n_estimators' : [100, 300, 500],
+    'learning_rate' : [0.01, 0.1, 0.5],
+    'max_depth' : [3, 4, 5, 6, 7, 8],
+    'gamma' : [0, 1, 2, 3],
+    'min_child_weight' : [0, 0.1, 0.5, 1],
+    'subsample' : [0.5, 0.7, 1],
+    'colsample_bytree' : [0.5, 0.7, 1],
+    'colsample_bylevel' : [0.5, 0.7, 1],
+    'colsample_bynode' : [0.5, 0.7, 1],
+    'reg_alpha' : [0, 0.1, 0.5, 1],
+    'reg_lambda' : [0, 0.1, 0.5, 1]
 }
 
 

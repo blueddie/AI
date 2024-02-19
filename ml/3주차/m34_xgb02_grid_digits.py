@@ -7,6 +7,8 @@ from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.metrics import accuracy_score
 from xgboost import XGBClassifier
 
+seed = 777
+
 datasets = load_digits()
 
 x = datasets.data
@@ -31,25 +33,40 @@ print(x.shape, y.shape) #(1797, 64) (1797,)
 
 #  모델 : RF
 # 그리드서치와 랜덤서치로 성능 및 시간 비교
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, random_state=42, stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, random_state=seed, stratify=y)
+
+# parameters = {
+#     'n_estimators' : [100, 200, 300]
+#     , 'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1]
+#     , 'max_depth' : [2, 3, 5, 7, 8]
+#     , 'gamma' : [0, 1, 2]
+# }
 
 parameters = {
-    'n_estimators' : [100, 200, 300]
-    , 'learning_rate' : [0.1, 0.2, 0.3, 0.5, 1]
-    , 'max_depth' : [2, 3, 5, 7, 8]
-    , 'gamma' : [0, 1, 2]
+    'n_estimators' : [100, 300, 500],
+    'learning_rate' : [0.01, 0.1, 0.5],
+    'max_depth' : [3, 4, 5, 6, 7, 8],
+    'gamma' : [0, 1, 2, 3],
+    'min_child_weight' : [0, 0.1, 0.5, 1],
+    'subsample' : [0.5, 0.7, 1],
+    'colsample_bytree' : [0.5, 0.7, 1],
+    'colsample_bylevel' : [0.5, 0.7, 1],
+    'colsample_bynode' : [0.5, 0.7, 1],
+    'reg_alpha' : [0, 0.1, 0.5, 1],
+    'reg_lambda' : [0, 0.1, 0.5, 1]
 }
 
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=123)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
 #2 모델
+xgb = XGBClassifier(random_state=seed)
 model = GridSearchCV(xgb()
                      , parameters
                      , cv=kfold
                      , verbose=1
                      , refit=True
-                     , n_jobs=-1  
+                     , n_jobs=-22  
                      )
 
 import time
