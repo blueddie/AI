@@ -61,7 +61,7 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
 #2 모델
 xgb = XGBClassifier(random_state=seed)
-model = RandomizedSearchCV(xgb()
+model = RandomizedSearchCV(xgb
                      , parameters
                      , cv=kfold
                      , verbose=1
