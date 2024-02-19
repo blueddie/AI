@@ -62,10 +62,11 @@ parameters = {
 
 xgb = XGBClassifier(random_state=777)
 
-model = GridSearchCV(xgb, parameters, cv=kfold
+model = RandomizedSearchCV(xgb, parameters, cv=kfold
                            , n_jobs=22
-                        #    , random_state=seed 
-                            , verbose=1
+                           , random_state=seed
+                           , verbose=1
+                           , n_iter=20 
                            )
 
 #3 훈련

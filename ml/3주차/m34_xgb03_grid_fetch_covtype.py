@@ -12,7 +12,7 @@ from sklearn.svm import LinearSVC
 import warnings
 from sklearn.utils import all_estimators
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
-from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV
+from sklearn.model_selection import StratifiedKFold, cross_val_predict, GridSearchCV, RandomizedSearchCV
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import MinMaxScaler, RobustScaler,StandardScaler,MaxAbsScaler
 from sklearn.utils import all_estimators
@@ -53,9 +53,11 @@ parameters = {
 
  #2. 모델 구성
 xgb = XGBClassifier(random_state=seed)
-model = GridSearchCV(xgb(), parameters, cv=kfold, verbose=1,
-                    # refit = True,     # default
-                     n_jobs=22)
+model = RandomizedSearchCV(xgb(), parameters, cv=kfold, verbose=1
+                           , n_jobs=22
+                           , n_iter=20
+                           , random_state=seed
+                           )
 
 
 

@@ -61,12 +61,14 @@ kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
 #2 모델
 xgb = XGBClassifier(random_state=seed)
-model = GridSearchCV(xgb()
+model = RandomizedSearchCV(xgb()
                      , parameters
                      , cv=kfold
                      , verbose=1
                      , refit=True
-                     , n_jobs=-22  
+                     , n_jobs=22
+                     , random_state=seed 
+                     , n_iter=20
                      )
 
 import time
