@@ -119,7 +119,7 @@ model = RandomizedSearchCV(XGBClassifier()
                      , refit=True
                      , n_jobs=-1
                      , n_iter=30
-                     , random_state=42
+                     , random_state=5310
                      )
 
 #3 훈련
