@@ -69,7 +69,9 @@ encoder = LabelEncoder()
 y = encoder.fit_transform(y)
 
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=6611, stratify=y)
+rs = 100005
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=rs, stratify=y)
 
 # parameters = [
 #     {'n_estimators': [100,200], 'max_depth': [6,12,18],
@@ -109,7 +111,7 @@ x_pred = scaler.transform(x_pred)
 
 
 n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=8663)
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=rs)
 
 #2 모델
 model = RandomizedSearchCV(XGBClassifier()
@@ -117,9 +119,9 @@ model = RandomizedSearchCV(XGBClassifier()
                      , cv=kfold
                      , verbose=1
                      , refit=True
-                     , n_jobs=-1
+                     , n_jobs=-2
                      , n_iter=30
-                     , random_state=5310
+                     , random_state=rs
                      )
 
 #3 훈련

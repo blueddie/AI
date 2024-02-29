@@ -15,29 +15,6 @@ from sklearn.preprocessing import StandardScaler, RobustScaler
 
 warnings.filterwarnings("ignore")
 
-def outlierHandler(data, labels):
-    data = pd.DataFrame(data)
-    
-    for label in labels:
-        series = data[label]
-        q1 = series.quantile(0.25)
-        q3 = series.quantile(0.75)
-        
-        iqr = q3 - q1
-        upper_bound = q3 + iqr
-        lower_bound = q1 - iqr
-        
-        series[series > upper_bound] = np.nan
-        series[series < lower_bound] = np.nan
-        
-        # print(series.isna().sum())
-        series = series.interpolate()
-        data[label] = series
-        
-        data = data.fillna(data.ffill())
-        data = data.fillna(data.bfill())
-
-    return data
 
 #1. 데이터
 csv_path = 'C:\\_data\\kaggle\\obesity\\'
@@ -53,29 +30,26 @@ columns_to_drop = ['NObeyesdad']
 x = xy.drop(columns=columns_to_drop)
 y = xy[columns_to_drop]
 
+# print(x)
+x['BMI'] = x['Weight'] / (x['Height']  ** 2)
+x_pred['BMI'] = x_pred['Weight'] / (x_pred['Height']  ** 2)
+
+# print(x['BMI'])
+# print("=-=-=-=-==-==-==")
+# print(x_pred['BMI'])
+
+
+
 non_float_x = []
-numeric_x = []
 for col in x.columns:
     if x[col].dtype != 'float64':
         non_float_x.append(col)
-    else :
-        numeric_x.append(col)
-        
-# print(numeric_x)
-x = outlierHandler(x, numeric_x)
-# print(pd.isna(x).sum())
 # print(non_float)    #['Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
 non_float_pred = []
-numeric_test = []
 for col in x_pred.columns:
     if x_pred[col].dtype != 'float64':
         non_float_pred.append(col)
-    else :
-        numeric_test.append(col)
 # print(non_float_pred)   #['Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
-print(numeric_test)
-x_pred = outlierHandler(x_pred, numeric_test)
-
 
 for col in non_float_x:
     print(f'x : {pd.value_counts(x[col])}')
@@ -99,21 +73,20 @@ for col in x.columns :
 # print(x.dtypes)
 # print(x_pred.dtypes)
 
-
 encoder = LabelEncoder()
 y = encoder.fit_transform(y)
 
-rs = 10005
+random_state = 1234
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=rs, stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=random_state, stratify=y)
 
 parameters = {
-    'learning_rate': [0.01, 0.1, 0.3],
+    'learning_rate': [0.01, 0.05],
     'max_depth': [3, 5, 7],
     'min_child_weight': [1, 3, 5],
     'subsample': [0.6, 0.8, 1.0],
     'colsample_bytree': [0.6, 0.8, 1.0],
-    'gamma': [0, 0.1, 0.2],
+    'gamma': [0, 0.1],
     'n_estimators': [100, 200, 300]
 }
 
@@ -123,18 +96,16 @@ x_train = scaler.transform(x_train)
 x_test = scaler.transform(x_test)
 x_pred = scaler.transform(x_pred)
 
-n_splits = 5
-kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=rs)
+n_splits = 3
+kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_state)
 
-#2 모델
-model = RandomizedSearchCV(XGBClassifier()
+model = GridSearchCV(XGBClassifier(tree_method='gpu_hist', predictor='gpu_predictor', id=0)
                      , parameters
                      , cv=kfold
                      , verbose=1
                      , refit=True
-                     , n_jobs=-1
-                     , n_iter=30
-                     , random_state=rs
+                     , n_jobs=-2
+                    #  , n_iter=30
                      )
 
 #3 훈련
@@ -142,31 +113,24 @@ start_time = time.time()
 model.fit(x_train, y_train)
 end_time = time.time()
 
-print("최적의 매개변수 : ", model.best_estimator_)
+# 4. 평가 예측
 print("최적의 파라미터 : ", model.best_params_)
 
 print('best_score : ', model.best_score_)
 print('model.score : ', model.score(x_test, y_test))
 
+print("훈련 시간 : ", round(end_time - start_time, 2), "초")
+
 y_predict = model.predict(x_test)
 acc = accuracy_score(y_test, y_predict)
 print("accuracy_score : ", acc)
-
-y_pred_best = model.best_estimator_.predict(x_test)
-print("최적튠 ACC : " , accuracy_score(y_test, y_pred_best))
-
-print("걸린시간 : ", round(end_time - start_time, 2), "초")
-
-results = model.score(x_test, y_test)
 
 y_submit = model.best_estimator_.predict(x_pred)
 y_submit = encoder.inverse_transform(y_submit)
 
 import datetime
 
-date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
-
+date = datetime.datetime.now().strftime("%m%d_%H%M")
 submission_csv['NObeyesdad'] = pd.DataFrame(y_submit.reshape(-1,1))
-submission_csv.to_csv(csv_path + f"{date}_{model.__class__.__name__}_acc_{results:.4f}.csv", index=False)
-print(results)
 
+submission_csv.to_csv(csv_path + f"{date}_{model.__class__.__name__}_acc_{acc:.4f}.csv", index=False)
