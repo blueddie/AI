@@ -93,8 +93,8 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 #     {'n_estimators': [100, 200, 300]}
 # ]
 parameters = {
-    'learning_rate': [0.01, 0.1, 0.3],
-    'max_depth': [3, 5, 7],
+    'learning_rate': [0.01, 0.1, 0.3, 0.4],
+    'max_depth': [3, 5, 7, 8],
     'min_child_weight': [1, 3, 5],
     'subsample': [0.6, 0.8, 1.0],
     'colsample_bytree': [0.6, 0.8, 1.0],
