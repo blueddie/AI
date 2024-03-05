@@ -76,10 +76,10 @@ model.fit(X_train, y_train
         #   , eval_metric='rmse'        # 회귀 디폴트
         #   , eval_metric='mae'         # rmsle, mape, mphe.. 등등...
 
-          # , eval_metric='logloss'     # 이진 분류 디폴트  ACC
+          # , eval_metric='logloss'     # 이진 분류 디폴트  ACC   로그 손실은 확률적 예측 모델의 성능을 평가하는 데 사용되며, 모델이 예측한 확률과 실제 레이블 간의 오차를 측정합니다
         #   , eval_metric='mlogloss'      # 다중 분류 디폴트 ACC
           
-        #   , eval_metric='error'       # 이진 분류
+        #   , eval_metric='error'       # 이진 분류     에러는 단순히 모델의 예측값과 실제 레이블 간의 일치 여부를 평가합니다
         #   , eval_metric='merror'    # 다중 분류
           # , eval_metric='auc'     # 이진 분류, 다중 분류 (하지만 이진 분류에 좋다)
           )
