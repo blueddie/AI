@@ -4,7 +4,10 @@ from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.metrics import accuracy_score
+# from sklearn.impute import IterativeImputer 
+import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -34,23 +37,72 @@ submission_csv = pd.read_csv(path + "sample_submission.csv")
 x = train_csv.drop(['quality'], axis=1)
 y = train_csv['quality'] - 3
 
+numeric_column_names = x.select_dtypes(include=['number']).columns.tolist()
+# print(numeric_column_names)
 # print(x.shape, y.shape) #(5497, 12) (5497,)
 lae = LabelEncoder()
 x['type'] = lae.fit_transform(x['type'])
 test_csv['type'] = lae.transform(test_csv['type'])
-# print(x)
-# print(test_csv)
-# print(y.value_counts())
-# 6    2416
-# 5    1788
-# 7     924
-# 4     186
-# 8     152
-# 3      26
-# 9       5
-# ohe = One
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1234, train_size=0.8, stratify=y)
+# print(x['type'].value_counts())
+# imputer = IterativeImputer()        # 선형회귀 알고리즘
+
+def outlierHandler(data, labels):
+    data = pd.DataFrame(data)
+    
+    for label in labels:
+        series = data[label]
+        q1 = series.quantile(0.25)
+        q3 = series.quantile(0.75)
+        
+        iqr = q3 - q1
+        upper_bound = q3 + (iqr * 1.3)
+        lower_bound = q1 - (iqr * 1.3)
+        
+        series[series > upper_bound] = np.nan
+        series[series < lower_bound] = np.nan
+        
+        print(label, series.isna().sum())
+        # series = series.interpolate()
+        imputer = SimpleImputer(strategy='most_frequent')
+        new_series = imputer.fit_transform(series.values.reshape(-1, 1))
+        data[label] = new_series
+        
+        data = data.fillna(data.ffill())
+        data = data.fillna(data.bfill())
+
+    return data
+
+out_x = outlierHandler(x, numeric_column_names)
+
+# scaler = StandardScaler()
+# out_x['citric acid'] = scaler.fit_transform(out_x['citric acid'].values.reshape(-1, 1))
+
+# grouped_counts = out_x.groupby('citric acid').size()
+# print(grouped_counts)
+# # 시각화
+# plt.bar(grouped_counts.index, grouped_counts.values)
+# plt.xlabel('Label')
+# plt.ylabel('Count')
+# plt.title('Count of Labels')
+# plt.show()
+
+
+
+
+# fixed acidity 507
+# volatile acidity 595
+# citric acid 775
+# residual sugar 355
+# chlorides 435
+# free sulfur dioxide 156
+# total sulfur dioxide 67
+# density 32
+# pH 247
+# sulphates 338
+# alcohol 90
+# type 1338
+x_train, x_test, y_train, y_test = train_test_split(out_x, y, random_state=1234, train_size=0.8, stratify=y)
 
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
@@ -86,8 +138,3 @@ results = model.score(x_test, y_test)
 y_predict = model.predict(x_test)
 acc = accuracy_score(y_test, y_predict)
 print(f"acc : {acc}")
-f1 = f1_score(y_test, y_predict, average='macro')
-print("f1 : ", f1)
-
-# acc : 0.6763636363636364
-# f1 :  0.39314588212844603

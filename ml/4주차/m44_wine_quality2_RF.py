@@ -4,7 +4,8 @@ from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -49,35 +50,36 @@ test_csv['type'] = lae.transform(test_csv['type'])
 # 3      26
 # 9       5
 # ohe = One
+# x = x.astype('float32')
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1234, train_size=0.8, stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=4567, train_size=0.8, stratify=y)
 
-scaler = StandardScaler()
+scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 
 
 parameters = {
-    'max_depth': 9,  # 트리의 최대 깊이를 설정합니다.
-    'learning_rate': 0.1,  # 학습률을 설정합니다.
-    'n_estimators': 100,  # 트리의 개수를 설정합니다.
-    'subsample': 0.8,  # 각 트리마다 사용될 샘플의 비율을 설정합니다.
-    'colsample_bytree': 0.8,  # 각 트리마다 사용될 피처의 비율을 설정합니다.
-    'reg_alpha': 0,  # L1 정규화 파라미터를 설정합니다.
-    'reg_lambda': 1,  # L2 정규화 파라미터를 설정합니다.
-    'random_state': 42  # 랜덤 시드를 설정합니다.
+    # 'max_depth': 9,  # 트리의 최대 깊이를 설정합니다.
+    # 'learning_rate': 0.1,  # 학습률을 설정합니다.
+    # 'n_estimators': 100,  # 트리의 개수를 설정합니다.
+    # 'subsample': 0.8,  # 각 트리마다 사용될 샘플의 비율을 설정합니다.
+    # 'colsample_bytree': 0.8,  # 각 트리마다 사용될 피처의 비율을 설정합니다.
+    # 'reg_alpha': 0,  # L1 정규화 파라미터를 설정합니다.
+    # 'reg_lambda': 1,  # L2 정규화 파라미터를 설정합니다.
+    # 'random_state': 42  # 랜덤 시드를 설정합니다.
 }
 
 # 2. 모델
-model = XGBClassifier()
-model.set_params(early_stopping_rounds=10, **parameters)
+model = RandomForestClassifier(random_state=456)
+# model.set_params(early_stopping_rounds=10, **parameters)
 
 # 3. 훈련
 model.fit(x_train, y_train,
-          eval_set=[(x_train, y_train), (x_test, y_test)],
-          verbose=1,
-          eval_metric='mlogloss'
+        #   eval_set=[(x_train, y_train), (x_test, y_test)],
+        #   verbose=1,
+        #   eval_metric='mlogloss'
           )
 
 # 4. 평가, 예측
@@ -86,8 +88,3 @@ results = model.score(x_test, y_test)
 y_predict = model.predict(x_test)
 acc = accuracy_score(y_test, y_predict)
 print(f"acc : {acc}")
-f1 = f1_score(y_test, y_predict, average='macro')
-print("f1 : ", f1)
-
-# acc : 0.6763636363636364
-# f1 :  0.39314588212844603

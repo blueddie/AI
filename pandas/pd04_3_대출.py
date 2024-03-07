@@ -36,7 +36,7 @@ def outlierHandler(data, labels):
         series[series > upper_bound] = np.nan
         series[series < lower_bound] = np.nan
         
-        # print(series.isna().sum())
+        print(series.isna().sum())
         series = series.interpolate()
         data[label] = series
         

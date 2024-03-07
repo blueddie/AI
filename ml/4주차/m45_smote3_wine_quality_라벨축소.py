@@ -4,7 +4,11 @@ from xgboost import XGBClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
+from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.metrics import accuracy_score, f1_score
+from imblearn.over_sampling import SMOTE    # anaconda에서 사이킷런 설치할 때 같이 설치됨    없다면  pip install imblearn
+# from sklearn.impute import IterativeImputer 
+import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -15,42 +19,56 @@ train_csv = pd.read_csv(path + "train.csv", index_col=0)
 test_csv = pd.read_csv(path + "test.csv", index_col=0)
 submission_csv = pd.read_csv(path + "sample_submission.csv")
 
-# print(train_csv.shape, test_csv.shape)  #(5497, 13) (1000, 12)
-# print(train_csv.dtypes)
-# quality                   int64
-# fixed acidity           float64
-# volatile acidity        float64
-# citric acid             float64
-# residual sugar          float64
-# chlorides               float64
-# free sulfur dioxide     float64
-# total sulfur dioxide    float64
-# density                 float64
-# pH                      float64
-# sulphates               float64
-# alcohol                 float64
-# type                     object
+# print(y.value_counts())
+lae = LabelEncoder()
+train_csv['type'] = lae.fit_transform(train_csv['type'])
+test_csv['type'] = lae.transform(test_csv['type'])
 
 x = train_csv.drop(['quality'], axis=1)
-y = train_csv['quality'] - 3
+y = train_csv['quality']
+# print(x.shape, y.shape)
+print(y.value_counts())
+def remove_outlier(dataset:pd.DataFrame):
+    for label in dataset:
+        data = dataset[label]
+        q1 = data.quantile(0.25)
+        q3 = data.quantile(0.75)
+        iqr = q3-q1
+        upbound    = q3 + iqr*1.5
+        underbound = q1 - iqr*1.5
+        dataset.loc[dataset[label] < underbound, label] = underbound
+        dataset.loc[dataset[label] > upbound, label] = upbound
+        
+    return dataset
 
-# print(x.shape, y.shape) #(5497, 12) (5497,)
-lae = LabelEncoder()
-x['type'] = lae.fit_transform(x['type'])
-test_csv['type'] = lae.transform(test_csv['type'])
-# print(x)
-# print(test_csv)
-# print(y.value_counts())
-# 6    2416
-# 5    1788
-# 7     924
-# 4     186
-# 8     152
-# 3      26
-# 9       5
-# ohe = One
+x = x.astype(np.float32)
+y = y.astype(np.float32)
+
+y = y.copy()  # 알아서 참고
+
+for i, v in enumerate(y):
+    if v <= 4:
+        y[i] = 0
+    elif v == 5:
+        y[i]=1
+    elif v == 6:
+        y[i]=2
+    # elif v==7:
+    #     y[i]=3    
+    # elif v==8:
+    #     y[i]=4
+    else:
+        y[i]=2
+        
+print(y.value_counts())
+
+
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=1234, train_size=0.8, stratify=y)
+
+smote = SMOTE(random_state=123, k_neighbors=3)
+x_train, y_train = smote.fit_resample(x_train, y_train)
+print(pd.value_counts(y_train))
 
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
@@ -87,7 +105,12 @@ y_predict = model.predict(x_test)
 acc = accuracy_score(y_test, y_predict)
 print(f"acc : {acc}")
 f1 = f1_score(y_test, y_predict, average='macro')
-print("f1 : ", f1)
+print(f"f1 : {f1}")
 
-# acc : 0.6763636363636364
-# f1 :  0.39314588212844603
+# 증폭 전
+# acc : 0.8009090909090909
+# f1 : 0.6145012728409012
+
+# 증폭 후
+# acc : 0.7936363636363636
+# f1 : 0.6596686668906738
