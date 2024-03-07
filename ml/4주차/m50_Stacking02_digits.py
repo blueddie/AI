@@ -3,10 +3,11 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from xgboost import XGBClassifier
-from sklearn.ensemble import BaggingClassifier
+from sklearn.ensemble import BaggingClassifier, StackingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+from catboost import CatBoostClassifier
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -26,25 +27,26 @@ rf = RandomForestClassifier(random_state=777)
 lr = LogisticRegression(random_state=777)
 
 
-model = BaggingClassifier(xgb,
-                          n_estimators=10, # 디폴트
-                          n_jobs=-2,
-                          random_state=777,
-                        #   bootstrap=True,   # 디폴트 중복을 허용한다
-                          bootstrap=False # 중복 허용 X
-                                                      
-                          )
+# 2. 모델
+xgb = XGBClassifier(random_state=777)
+rf = RandomForestClassifier(random_state=777)
+lr = LogisticRegression(random_state=777, max_iter=1000)
+
+model = StackingClassifier(
+    estimators=[('XGB', xgb), ("RF", rf), ("LR", lr)],
+    final_estimator=CatBoostClassifier(verbose=0),
+    # stack_method='auto',  # 디폴트 'auto'로, 자동으로 적절한 쌓기 방법을 선택합니다. 'predict_proba' 또는 'predict' 중 선택할 수 있습니다.
+    n_jobs=-1,
+    cv=5
+)
 
 # 3. 훈련
 model.fit(x_train, y_train)
 
 # 4. 평가, 예측
-results = model.score(x_test, y_test)
-print("최종 점수 : ", results)
-
-y_predict = model.predict(x_test)
-acc = accuracy_score(y_test, y_predict)
-print("acc_score : ", acc)
+y_pred = model.predict(x_test)
+print(f"model.score : {model.score(x_test,y_test)}")
+print("스태킹 ACC : ", accuracy_score(y_test, y_pred))
 
 # bootstrap=False
 # 최종 점수 :  0.9805555555555555
@@ -53,3 +55,6 @@ print("acc_score : ", acc)
 # bootstrap=True
 # 최종 점수 :  0.9722222222222222
 # acc_score :  0.9722222222222222
+
+# model.score : 0.9777777777777777
+# 스태킹 ACC :  0.9777777777777777

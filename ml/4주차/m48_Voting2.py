@@ -23,6 +23,7 @@ x_test = scaler.transform(x_test)
     
     
 # }
+
 parameters = {
     # 'objective': 'binary:logistic',  # 분류 문제인 경우 이진 분류를 위해 'binary:logistic'으로 설정합니다.
     # 'eval_metric': 'logloss',  # 모델 평가 지표로 로그 손실을 사용합니다.
@@ -89,3 +90,5 @@ for model2 in model_class:
 # voting hard
 # 최종 점수 :  0.9824561403508771
 # acc_score :  0.9824561403508771
+
+# 
