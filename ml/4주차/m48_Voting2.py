@@ -60,14 +60,14 @@ y_predict = model.predict(x_test)
 acc = accuracy_score(y_test, y_predict)
 print("acc_score : ", acc)
 
-model_class = [xgb, rf, lr]
+model_class = [xgb, rf, lr] 
 
 for model2 in model_class:
     model2.fit(x_train, y_train)
     y_pred = model2.predict(x_test)
     score2 = accuracy_score(y_test, y_pred)
     class_name = model2.__class__.__name__
-    print("{0} 정확도 : {1:.4f}".format(class_name, score2))
+    print("{0} 정확도 : {1:.4f}".format(class_name, score2)) # 키보드 체감 테스트 아아 테스트중입니다. 
 
 
 # xgb

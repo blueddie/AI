@@ -28,24 +28,10 @@ from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import  HalvingGridSearchCV,HalvingRandomSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import BaggingClassifier
+from sklearn.ensemble import BaggingClassifier, StackingClassifier
+from catboost import CatBoostClassifier
 warnings.filterwarnings ('ignore')
 from imblearn.over_sampling import SMOTE
-
-
-
-# def save_code_to_file(filename=None):
-# if filename is None:
-#     # 현재 스크립트의 파일명을 가져와서 확장자를 txt로 변경
-#     filename = os.path.splitext(os.path.basename(__file__))[0] + ".txt"
-# else:
-#     filename = filename + ".txt"
-# with open(__file__, "r") as file:
-#     code = file.read()
-
-# with open(filename, "w") as file:
-#     file.write(code)
-
 
 path = "c:\\_data\\dacon\\loan_grade\\"
 
@@ -103,30 +89,28 @@ scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
+# print(x_train)
 
 # 2. 모델
-model = BaggingClassifier(LogisticRegression(max_iter=10000), # max_iter DEFAULT 100
-                          n_estimators=10, # 디폴트
-                          n_jobs=-2,
-                          random_state=777,
-                          # bootstrap=True,   # 디폴트 중복을 허용한다
-                          bootstrap=False # 중복 허용 X
-                                                      
-                          )
+xgb = XGBClassifier(random_state=777)
+rf = RandomForestClassifier(random_state=777)
+lr = LogisticRegression(random_state=777, max_iter=1000)
+
+model = StackingClassifier(
+    estimators=[('XGB', xgb), ("RF", rf), ("LR", lr)],
+    final_estimator=CatBoostClassifier(verbose=0),
+    # stack_method='auto',  # 디폴트 'auto'로, 자동으로 적절한 쌓기 방법을 선택합니다. 'predict_proba' 또는 'predict' 중 선택할 수 있습니다.
+    n_jobs=-1,
+    cv=5
+)
 
 # 3. 훈련
 model.fit(x_train, y_train)
 
 # 4. 평가, 예측
-results = model.score(x_test, y_test)
-print("최종 점수 : ", results)
+y_pred = model.predict(x_test)
+print(f"model.score : {model.score(x_test,y_test)}")
+print("스태킹 ACC : ", accuracy_score(y_test, y_pred))
 
-y_predict = model.predict(x_test)
-acc = accuracy_score(y_test, y_predict)
-print("acc_score : ", acc)
-
-# bootstrap=False # 중복 허용 X
-
-
-
-# bootstrap=True
+# model.score : 0.8513422296069371
+# 스태킹 ACC :  0.8513422296069371

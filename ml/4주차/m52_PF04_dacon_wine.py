@@ -5,11 +5,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import BaggingClassifier, RandomForestClassifier, StackingClassifier
+from sklearn.ensemble import BaggingClassifier
 from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.metrics import accuracy_score, f1_score
-from catboost import CatBoostClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import PolynomialFeatures
 from imblearn.over_sampling import SMOTE    # anaconda에서 사이킷런 설치할 때 같이 설치됨    없다면  pip install imblearn
 # from sklearn.impute import IterativeImputer 
 import matplotlib.pyplot as plt
@@ -31,35 +31,35 @@ test_csv['type'] = lae.transform(test_csv['type'])
 x = train_csv.drop(['quality'], axis=1)
 y = train_csv['quality'] - 3
 
-print(x.shape, y.shape)
+x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=777, stratify=y)
 
-x_train , x_test , y_train , y_test = train_test_split(x, y, test_size=0.2 , random_state=777, stratify= y)
+pf = PolynomialFeatures(degree=2, include_bias=False)
+x_poly_train = pf.fit_transform(x_train)
+x_poly_test = pf.transform(x_test)
 
 scaler = MinMaxScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
+x_poly_train = scaler.fit_transform(x_poly_train)
+x_poly_test = scaler.transform(x_poly_test)
 
 # 2. 모델
-xgb = XGBClassifier(random_state=777)
-rf = RandomForestClassifier(random_state=777)
-lr = LogisticRegression(random_state=777, max_iter=1000)
-
-model = StackingClassifier(
-    estimators=[('XGB', xgb), ("RF", rf), ("LR", lr)],
-    final_estimator=CatBoostClassifier(verbose=0),
-    # stack_method='auto',  # 디폴트 'auto'로, 자동으로 적절한 쌓기 방법을 선택합니다. 'predict_proba' 또는 'predict' 중 선택할 수 있습니다.
-    n_jobs=-1,
-    cv=5
-)
+# model = LogisticRegression()
+# model = RandomForestClassifier()
+model = XGBClassifier()
+model2 = XGBClassifier()
 
 # 3. 훈련
 model.fit(x_train, y_train)
+model2.fit(x_poly_train, y_train)
 
-# 4. 평가, 예측
-y_pred = model.predict(x_test)
-print(f"model.score : {model.score(x_test,y_test)}")
-print("스태킹 ACC : ", accuracy_score(y_test, y_pred))
+# 4.
+score = model.score(x_test, y_test)
+class_name = model.__class__.__name__
 
-# model.score : 0.6745454545454546
-# 스태킹 ACC :  0.6745454545454546
+score2 = model2.score(x_poly_test, y_test)
+class_name = model.__class__.__name__
 
+print("{0} ACC : {1:.6f}".format(class_name, score))
+print("{0} ACC : {1:.6f}".format(class_name, score2))
+
+# XGBClassifier ACC : 0.637091
+# XGBClassifier ACC : 0.645091

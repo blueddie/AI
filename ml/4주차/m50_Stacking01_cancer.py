@@ -46,3 +46,6 @@ model.fit(x_train, y_train)
 y_pred = model.predict(x_test)
 print(f"model.score : {model.score(x_test,y_test)}")
 print("스태킹 ACC : ", accuracy_score(y_test, y_pred))
+
+# model.score : 1.0
+# 스태킹 ACC :  1.0
