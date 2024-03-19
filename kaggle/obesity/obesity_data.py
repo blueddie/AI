@@ -44,6 +44,7 @@ for col in non_float_x:
     print('------------------------------------')
 
 x_pred['CALC'] = x_pred['CALC'].replace({'Always' : 'Sometimes'})
+# x_pred['CALC'] = x_pred['CALC'].replace({'Always' : 'Sometimes'})
 
 for column in df.columns:
     if (df[column].dtype != 'float64'):
