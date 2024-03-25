@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression
 import random
 import time
 
-#1. 데이터 
+#1. 데이터    
 path = "c:\\_data\\dacon\\ddarung\\"
 
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
