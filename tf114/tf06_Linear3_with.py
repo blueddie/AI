@@ -20,14 +20,15 @@ train = optimizer.minimize(loss)                                        # == mod
 
 
 # 3-2. 훈련
-sess = tf.compat.v1.Session()
-sess.run(tf.global_variables_initializer()) # 변수 초기화
+# sess = tf.compat.v1.Session()
+with tf.compat.v1.Session() as sess:
+    sess.run(tf.global_variables_initializer()) # 변수 초기화
 
-# model.fit
-epochs = 100
-for step in range(epochs):
-    sess.run(train)         # 메인 알고리즘
-    if step % 20 == 0:
-        print(step + 1, sess.run(loss), sess.run(w), sess.run(b))   # verbose와 model.weight에서 봤던 애들.
+    # model.fit
+    epochs = 100
+    for step in range(epochs):
+        sess.run(train)         # 메인 알고리즘
+        if step % 20 == 0:
+            print(step + 1, sess.run(loss), sess.run(w), sess.run(b))   # verbose와 model.weight에서 봤던 애들.
 
-sess.close()
+    # sess.close() with 문 안에 넣어버리면 sess.close() 하지 않아도 된다. 어차피 with가 종료되면서 sess도 종료된다.
