@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 tf.set_random_seed(777)
 
 # 1. 데이터
+
 x_data = [1, 2, 3, 4, 5]
 y_data = [3, 5, 7, 9, 11]
 
