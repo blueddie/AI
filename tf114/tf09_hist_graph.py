@@ -4,6 +4,8 @@
 
 import tensorflow as tf
 import numpy as np
+import matplotlib.pyplot as plt
+
 tf.set_random_seed(777)
 
 # 1. 데이터
@@ -39,6 +41,10 @@ train = optimizer.minimize(loss)                                        # == mod
 
 # 3-2. 훈련
 # sess = tf.compat.v1.Session()
+loss_val_list = []
+w_val_list = []
+b_val_list = []
+
 with tf.compat.v1.Session() as sess:
     sess.run(tf.global_variables_initializer()) # 변수 초기화
 
@@ -50,6 +56,10 @@ with tf.compat.v1.Session() as sess:
 
         # sess.run(train, feed_dict={x_ph: x, y_ph: y})         # 메인 알고리즘
         _, loss_val, w_val, b_val = sess.run([train, loss, w, b], feed_dict={x:x_data, y:y_data})
+
+        loss_val_list.append(loss_val)
+        w_val_list.append(w_val)
+        b_val_list.append(b_val)
 
         if step % 20 == 0:
             print(step + 1, loss_val, w_val, b_val)   # verbose와 model.weight에서 봤던 애들.
@@ -80,13 +90,48 @@ with tf.compat.v1.Session() as sess:
     #     lr = lr * 0.95
 
 
+print("loss list : ",loss_val_list)
+print("w list : ", w_val_list)
+# print("b list : ", b_val_list)
 
-#     sess.close() with 문 안에 넣어버리면 sess.close() 하지 않아도 된다. 어차피 with가 종료되면서 sess도 종료된다.
-# 1 19.95235 [1.0985938] [0.5411478]
-# 21 0.006446996 [2.0459719] [0.81725544]
-# 41 0.0052748797 [2.0469735] [0.83033496]
-# 61 0.004606609 [2.0439153] [0.8414514]
-# 81 0.0040229596 [2.0410395] [0.8518348]           
+# plt.plot(loss_val_list)
+# plt.xlabel('epochs')
+# plt.ylabel('loss')
+# plt.show()
 
+# plt.plot(w_val_list)
+# plt.xlabel('epochs')
+# plt.ylabel('weights')
+# plt.show()
 
+# plt.scatter(w_val_list, loss_val_list)
+# plt.xlabel('weights')
+# plt.ylabel('loss')
+# plt.show()
 
+# 그래프를 4분할하는 서브플롯 생성
+fig, axs = plt.subplots(2, 2)
+
+# 첫 번째 그래프: 손실 함수 값 그래프
+axs[0, 0].plot(loss_val_list)
+axs[0, 0].set_xlabel('epochs')
+axs[0, 0].set_ylabel('loss')
+
+# 두 번째 그래프: 가중치 값 그래프
+axs[0, 1].plot(w_val_list)
+axs[0, 1].set_xlabel('epochs')
+axs[0, 1].set_ylabel('weights')
+
+# 세 번째 그래프: 가중치와 손실 함수 값의 산점도
+axs[1, 0].scatter(w_val_list, loss_val_list)
+axs[1, 0].set_xlabel('weights')
+axs[1, 0].set_ylabel('loss')
+
+# 네 번째 그래프: 공백
+axs[1, 1].axis('off')
+
+# 서브플롯 레이아웃 조정
+plt.tight_layout()
+
+# 그래프 출력
+plt.show()
