@@ -18,6 +18,7 @@ X = train_csv.drop(['count', 'casual', 'registered'], axis=1)
 y = train_csv['count']
 test_csv = test_csv.drop([], axis=1)
 
+
 #2. 모델
 model = Sequential()
 model.add(Dense(8, input_dim=8, activation='relu'))
