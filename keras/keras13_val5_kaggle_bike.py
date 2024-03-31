@@ -8,7 +8,7 @@ from sklearn.metrics import r2_score, mean_squared_error, mean_squared_log_error
 from sklearn.linear_model import LinearRegression
 import random
 import time
-
+  
 #1. 데이터
 path = "C://_data//kaggle//bike//"
 train_csv = pd.read_csv(path + "train.csv", index_col=0)
