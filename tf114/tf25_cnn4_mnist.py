@@ -37,6 +37,7 @@ L1_maxpool = tf.nn.max_pool2d(L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padd
 
 print(L1)   #Tensor("Relu:0", shape=(?, 27, 27, 128), dtype=float32)
 print(L1_maxpool)   # Tensor("MaxPool2d:0", shape=(?, 13, 13, 128), dtype=float32)  padding="VALID"
+# print(L1_maxpool)   # Tensor("MaxPool2d:0", shape=(?, 13, 13, 128), dtype=float32)  padding="VALID"
 # print(L1_maxpool)   # Tensor("MaxPool2d:0", shape=(?, 14, 14, 128), dtype=float32)  padding="SAME"
 
 '''
