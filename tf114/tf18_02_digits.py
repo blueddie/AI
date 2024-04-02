@@ -24,7 +24,7 @@ x_test = scaler.transform(x_test)
 x = tf.compat.v1.placeholder(tf.float32, shape=[None, 64])
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 10])
 w = tf.compat.v1.Variable(tf.random_normal([64, 10]), name='weight')
-b = tf.compat.v1.Variable(tf.zeros([1, 10]), name='bias')
+b = tf.compat.v1.Variable(tf.zeros([1]), name='bias')
 
 # 2. 모델
 hypothesis = tf.nn.softmax(tf.compat.v1.matmul(x, w) + b)
