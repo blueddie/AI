@@ -11,6 +11,7 @@ datasets = load_diabetes()
 X = datasets.data
 y = datasets.target
 
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1226, train_size=0.85)
 
 scaler = StandardScaler()
