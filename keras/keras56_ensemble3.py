@@ -18,6 +18,7 @@ x3_datasets = np.array([range(100), range(301,401), range(77, 177), range(33, 13
 print(x1_datasets.shape, x2_datasets.shape, x3_datasets.shape)    #(100, 2) (100, 3) (100, 4)
 
 y1 = np.array(range(3001, 3101))   # 비트코인 종가
+# y2 = np.array(range(13001, 13101))   # 비트코인 종가
 y2 = np.array(range(13001, 13101))   # 비트코인 종가
 print(y1.shape, y2.shape)                    # (100,)
 
