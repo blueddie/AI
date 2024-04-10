@@ -2,7 +2,7 @@ from keras.layers import Dense, Input, concatenate, Concatenate
 from keras.models import Sequential, Model
 from sklearn.model_selection import train_test_split
 import numpy as np
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, collections
 from sklearn.metrics import r2_score
 
 
