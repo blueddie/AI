@@ -7,6 +7,7 @@ from sklearn.metrics import r2_score
 
 
 #.1 데이터
+# x1_datasets = np.array([range(301, 401), range(301, 401)]).T                  # 삼성 종가, 하이닉스 종가
 x1_datasets = np.array([range(301, 401), range(301, 401)]).T                  # 삼성 종가, 하이닉스 종가
 x2_datasets = np.array([range(101, 201), range(411, 511), range(150, 250)]).T # 원유, 환율, 금시세
 x3_datasets = np.array([range(100), range(301,401), range(77, 177), range(33, 133)]).T    # blah blah blah
