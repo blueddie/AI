@@ -21,3 +21,17 @@ print(sess.run(hello))
     # 2.9.0       enable(디폴트)         에러
 
 # 텐서플로1에서는 eager 그냥 쓰면 됨 디폴트임 텐서플로2에서는 disable로 해줘야 함.
+
+'''
+Tensor 1은 '그래프 연산' 모드
+Tenso 2는 '즉시 실행' 모드
+tf.compat.v1.enable_eager_execustion()   #  즉시 실행 모드 켜
+                    -> Tensor2의 디폴트
+
+tf.compat.v1.disable_eager_execution()  #  즉시 실행 모드 꺼
+                                -> 그래프 연산 모드로 돌아간다.
+                                -> Tensor1 코드를 쓸 수 있다.
+tf.executing_eagerly() # True면 즉시 실행 모드, -> Tensor2 코드만 써야 한다.
+                        False 면 그래프 연산 모드 -> Tensor 1 코드를 쓸 수 있다.                                
+
+'''

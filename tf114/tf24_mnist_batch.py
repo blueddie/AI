@@ -2,7 +2,8 @@ import tensorflow as tf
 from tensorflow.keras.datasets import mnist
 from sklearn.metrics import accuracy_score
 import numpy as np
-tf.set_random_seed(777)
+tf.compat.v1.set_random_seed(777)
+tf.compat.v1.disable_eager_execution()  # gpu 돌려
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
@@ -35,14 +36,18 @@ x = tf.compat.v1.placeholder(tf.float32, shape=[None, 784])
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 10])
 
 # layer1
-w1 = tf.compat.v1.get_variable('w1', shape=[784, 128], initializer=tf.contrib.layers.xavier_initializer())  # 초기화는 첫 에포만 진행되고, 그 이후는 비활성화 ★
+w1 = tf.compat.v1.get_variable('w1', shape=[784, 128],
+                                # initializer=tf.contrib.layers.xavier_initializer()
+                               )  # 초기화는 첫 에포만 진행되고, 그 이후는 비활성화 ★
 b1 = tf.compat.v1.Variable(tf.zeros([128]), name='b1')
 
 layer1 = tf.compat.v1.matmul(x , w1) + b1
 layer1 = tf.compat.v1.nn.dropout(layer1, rate=0.3)
 
 # layer2
-w2 = tf.compat.v1.get_variable('w2', shape=[128, 64], initializer=tf.contrib.layers.xavier_initializer())
+w2 = tf.compat.v1.get_variable('w2', shape=[128, 64]
+                            #    , initializer=tf.contrib.layers.xavier_initializer()
+                               )
 b2 = tf.compat.v1.Variable(tf.zeros([64]), name='b1')
 
 layer2 = tf.compat.v1.matmul(layer1 , w2) + b2
@@ -50,7 +55,9 @@ layer2 = tf.compat.v1.nn.relu(layer2)
 layer2 = tf.compat.v1.nn.dropout(layer2, rate=0.3)
 
 # layer3
-w3 = tf.compat.v1.get_variable('w3', shape=[64, 32], initializer=tf.contrib.layers.xavier_initializer())
+w3 = tf.compat.v1.get_variable('w3', shape=[64, 32], 
+                            #    initializer=tf.contrib.layers.xavier_initializer()
+                               )
 b3 = tf.compat.v1.Variable(tf.zeros([32]), name='b3')
 
 layer3 = tf.compat.v1.matmul(layer2 , w3) + b3
@@ -67,7 +74,7 @@ hypothesis = tf.compat.v1.nn.softmax(layer4)
 # 3-1. 컴파일
 # loss = tf.compat.v1.losses.softmax_cross_entropy(y, hypothesis)
 
-loss = tf.reduce_mean(-tf.reduce_sum(y * tf.log(hypothesis), axis=1)) # categorical_crossentropy
+loss = tf.reduce_mean(-tf.reduce_sum(y * tf.compat.v1.log(hypothesis), axis=1)) # categorical_crossentropy
 train = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-3).minimize(loss)
 
 # 3-2. 훈련
