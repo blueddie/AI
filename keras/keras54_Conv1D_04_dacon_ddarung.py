@@ -6,7 +6,7 @@ from keras.layers import Dense, LSTM, Flatten, Conv1D
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error,mean_squared_log_error
 from sklearn.linear_model import LinearRegression
-import random
+import random, _bootlocale
 import time
 from sklearn.preprocessing import MinMaxScaler, MaxAbsScaler
 
