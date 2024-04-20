@@ -8,6 +8,9 @@ import datetime
 # target 300 300 3
 
 path_train = 'C:\\_data\\image\\horse_human\\'
+# path_train = 'C:\\_data\\image\\horse_human\\'
+
+
 
 train_datagen = ImageDataGenerator(
     rescale=1./255
