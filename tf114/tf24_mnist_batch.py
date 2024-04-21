@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.datasets import mnist
 from sklearn.metrics import accuracy_score
 import numpy as np
-tf.compat.v1.set_random_seed(777)
+tf.compat.v1.set_random_seed(72227)
 tf.compat.v1.disable_eager_execution()  # gpu 돌려
 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
