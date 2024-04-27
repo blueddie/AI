@@ -8,7 +8,6 @@ import datetime
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
 
-
 date = datetime.datetime.now().strftime("%m%d_%H%M")    #01171053   
 path = '..\\_data\_save\\MCP\\cifar\\'
 filename = '{epoch:04d}-{val_loss:.4f}.hdf5'
