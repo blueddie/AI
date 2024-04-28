@@ -32,6 +32,7 @@ b1 = tf.compat.v1.Variable(tf.zeros([128]), name='b1')
 L1 = tf.nn.conv2d(x, w1, strides=[1, 1, 1, 1], padding='VALID') # 가운데 숫자 2개가 스트라이드 맨 앞 맨 뒤는 shape 맞추는 용 stride 2,2로 주려면 1, 2, 2, 로 바꾸면 된다.
 L1 += b1
 L1 = tf.nn.relu(L1)
+# L1_maxpool = tf.nn.max_pool2d(L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="VALID")
 L1_maxpool = tf.nn.max_pool2d(L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding="VALID")
 
 print(L1)   #Tensor("Relu:0", shape=(?, 27, 27, 128), dtype=float32)
