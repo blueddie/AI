@@ -19,21 +19,21 @@
 # result = merge_numbers(original_list, desired_length)
 # print(result)
 #####################################
-# def reduce_labels(labels, num_groups):
-#     grouped_labels = []
-#     labels_per_group = len(labels) // num_groups
-#     remainder = len(labels) % num_groups
-#     start_index = 0
-#     for i in range(num_groups):
-#         group_size = labels_per_group + (1 if i < remainder else 0)
-#         end_index = start_index + group_size
-#         grouped_labels.append((start_index, end_index - 1))
-#         start_index = end_index
-#     return grouped_labels
+def reduce_labels(labels, num_groups):
+    grouped_labels = []
+    labels_per_group = len(labels) // num_groups
+    remainder = len(labels) % num_groups
+    start_index = 0
+    for i in range(num_groups):
+        group_size = labels_per_group + (1 if i < remainder else 0)
+        end_index = start_index + group_size
+        grouped_labels.append((start_index, end_index - 1))
+        start_index = end_index
+    return grouped_labels
 
-# # 예시 라벨과 원하는 그룹 개수 입력
-# labels = list(range(7))  # 0부터 6까지의 숫자
-# num_groups = 3
+# 예시 라벨과 원하는 그룹 개수 입력
+labels = list(range(7))  # 0부터 6까지의 숫자
+num_groups = 3
 
 # # 함수 호출
 # grouped_labels = reduce_labels(labels, num_groups)
