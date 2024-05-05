@@ -23,6 +23,7 @@ def extract_frames(video_path, output_folder):
         frame_count += 1
         frame_name = f"frame_{frame_count}.jpg"  # 프레임 파일명 생성
         frame_path = os.path.join(output_folder, frame_name)  # 프레임 저장 경로 생성
+        # cv2.imwrite(frame_path, frame)  # 프레임을 이미지 파일로 저장
         cv2.imwrite(frame_path, frame)  # 프레임을 이미지 파일로 저장
 
     # 영상 파일 닫기
