@@ -1,39 +1,39 @@
-import tensorflow as tf
-import numpy as np
-# tf.compat.v1.set_random_seed(777)
+import cv2  # OpenCV 라이브러리 임포트
+import os   # 파일 시스템 관리를 위한 os 모듈 임포트
 
-# 1. 데이터
-from tensorflow.keras.datasets import mnist
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+def extract_frames(video_path, output_folder):
+    """
+    영상 파일에서 프레임을 추출하여 이미지 파일로 저장하는 함수
+    :param video_path: 추출할 영상 파일 경로
+    :param output_folder: 추출된 프레임을 저장할 폴더 경로
+    """
+    # 영상 파일 열기
+    video_capture = cv2.VideoCapture(video_path)
+    # 프레임 카운트 초기화
+    frame_count = 0
 
+    # 영상이 열렸는지 확인
+    while video_capture.isOpened():
+        # 프레임 읽기
+        ret, frame = video_capture.read()
+        if not ret:  # ret이 False면 영상이 끝난 것이므로 루프를 종료
+            break
 
+        # 프레임 저장
+        frame_count += 1
+        frame_name = f"frame_{frame_count}.jpg"  # 프레임 파일명 생성
+        frame_path = os.path.join(output_folder, frame_name)  # 프레임 저장 경로 생성
+        # cv2.imwrite(frame_path, frame)  # 프레임을 이미지 파일로 저장
+        cv2.imwrite(frame_path, frame)  # 프레임을 이미지 파일로 저장
 
-from tensorflow.keras.utils import to_categorical
-y_train = to_categorical(y_train)
-y_test = to_categorical(y_test)
+    # 영상 파일 닫기
+    video_capture.release()
+    cv2.destroyAllWindows()
 
-print(x_train.shape, y_train.shape) # (60000, 28, 28) (60000, 10)
-print(x_test.shape, y_test.shape)   # (10000, 28, 28) (10000, 10)
+# 영상 파일 경로 설정
+video_path = 'C:\\group_project_data\\train\\123.mp4'
+# 프레임을 저장할 폴더 설정
+output_folder = 'C:\\group_project_data\\test'
 
-x_train = x_train.reshape(-1, 28, 28, 1).astype('float32') / 255.
-x_test = x_test.reshape(-1, 28, 28, 1).astype('float32') / 255.
-
-# 2. 모델 구성
-x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1]) # input_shape
-y = tf.compat.v1.placeholder(tf.float32, [None, 10])
-
-# Layer1
-w1 = tf.compat.v1.get_variable('w1', shape=[2, 2, 1, 1], # 커널 사이즈, 커널(채널), 필터(아웃풋)
-                               initializer=tf.contrib.layers.xavier_initializer())
-
-with tf.compat.v1.Session() as sess:
-    sess.run(tf.compat.v1.global_variables_initializer())
-
-    w1_val = sess.run(w1)
-    print(w1_val)
-    print(w1_val.shape)
-
-# [[[[ 0.13086772]]
-#   [[-0.62648165]]]
-#  [[[-0.0779385 ]]
-#   [[ 0.36530012]]]]
+# 프레임 추출 실행
+extract_frames(video_path, output_folder)
