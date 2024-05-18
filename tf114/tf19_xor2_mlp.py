@@ -7,8 +7,10 @@ x_data = [[0, 0], [0, 1], [1, 0], [1, 1]]   # (4, 2)
 y_data = [[0], [1], [1], [0]]               # (4, 1)
 
 
+
 # 2. 모델
 # layer1 : model.add(Dense(16,input_dim=2))
+
 x = tf.compat.v1.placeholder(tf.float32, shape=[None, 2])
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 1])
 
