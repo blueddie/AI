@@ -21,7 +21,8 @@ y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)
 x_test = torch.FloatTensor(x_test).unsqueeze(1).to(DEVICE)
 y_test = torch.FloatTensor(y_test).unsqueeze(1).to(DEVICE)
 
-print(x_train.shape)  # 예: (80, 1)
+print(x_train.shape, x_test.shape)  # 예: (80, 1)
+print(y_train.shape, y_train.shape)
 print(x_train, y_train)
 
 # 2. 모델구성

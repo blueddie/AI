@@ -18,3 +18,5 @@ class Cat(Animal):
 
 my_cat = Cat()
 my_cat.speak()  # 출력 : 동물이 소리를 낸다. 야옹
+
+# 클
