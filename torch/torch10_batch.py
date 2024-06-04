@@ -1,0 +1,162 @@
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_breast_cancer
+from sklearn.preprocessing import StandardScaler
+
+USE_CUDA = torch.cuda.is_available()
+DEVICE = torch.device('cuda' if USE_CUDA else 'cpu')
+# DEVICE = 'cpu'
+print('torch : ', torch.__version__, '사용 DEVICE :', DEVICE)
+
+# 1. 데이터
+datasets = load_breast_cancer()
+x = datasets.data
+y = datasets.target
+
+print(x.shape, y.shape)
+
+# train_test_split을 사용하여 데이터를 훈련 세트와 테스트 세트로 분리합니다.
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42, stratify=y)
+
+print(x_train.shape, x_test.shape)
+
+print(y_train.shape, y_test.shape)
+
+scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+
+x_train = torch.FloatTensor(x_train).to(DEVICE)
+x_test = torch.FloatTensor(x_test).to(DEVICE)
+y_train = torch.FloatTensor(y_train).unsqueeze(1).to(DEVICE)
+y_test = torch.FloatTensor(y_test).unsqueeze(1).to(DEVICE)
+
+# 토치데이터 만들기 1. x, y를 합친다.
+from torch.utils.data import TensorDataset,DataLoader
+train_set = TensorDataset(x_train, y_train)
+test_set = TensorDataset(x_test, y_test)
+
+print(train_set)    # <torch.utils.data.dataset.TensorDataset object at 0x0000015B44705FD0>
+print(len(train_set))   # 398
+
+# 토치 데이터 만들기 2. 배치 넣어준다
+train_loader = DataLoader(train_set, batch_size=32, shuffle=True)
+test_loader = DataLoader(test_set, batch_size=32, shuffle=False) # shuffle=True로 해도 상관없지만 통상적으로 test셋은 섞지 않음.
+
+
+
+# 2. 모델구성
+class Model(nn.Module) :
+    def __init__(self, input_dim, output_dim):
+        # super().__init__()
+        super(Model, self).__init__()
+        self.linear1 = nn.Linear(input_dim, 64)
+        self.linear2 = nn.Linear(64, 32)
+        self.linear3 = nn.Linear(32, 16)
+        self.linear4 = nn.Linear(16, output_dim)
+        self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
+
+    # 순전파
+    def forward(self, input_size):
+
+        x = self.linear1(input_size)
+        x = self.linear2(x)
+        x = self.relu(x)
+        x = self.linear3(x)
+        x = self.relu(x)
+        x = self.linear4(x)
+        x = self.sigmoid(x)
+        
+        return x
+
+model = Model(30, 1).to(DEVICE)
+
+# 3. 컴파일, 훈련
+# criterion = nn.MSELoss()
+criterion = nn.BCELoss()
+
+# optimizer = optim.SGD(model.parameters(), lr=0.1)
+optimizer = optim.Adam(model.parameters(), lr=0.01)
+
+# 훈련 함수 정의
+def train(model, criterion, optimizer, loader):
+    # model.train()  # 훈련 모드
+    total_loss = 0
+    for x_batch, y_batch in loader:
+        
+        optimizer.zero_grad()
+        hypothesis = model(x_batch)  # 순전파: 예측값 계산
+        loss = criterion(hypothesis, y_batch)  # 손실 계산
+
+        # 역전파
+        loss.backward()  # 기울기 계산
+        optimizer.step()  # 가중치 갱신
+
+        total_loss += loss.item()
+
+    return total_loss / len(loader)
+
+# 평가 함수 정의
+def evaluate(model, criterion, loader):
+    model.eval()  # 평가 모드
+
+    total_loss = 0
+    for x_batch, y_batch in loader:
+        
+        with torch.no_grad():
+            y_predict = model(x_batch)
+            loss2 = criterion(y_predict, y_batch)
+
+        total_loss += loss2.item()
+    return total_loss / len(loader)
+
+# 훈련 루프
+epochs = 200
+for epoch in range(1, epochs + 1):
+    loss = train(model, criterion, optimizer, train_loader)
+    if epoch % 10 == 0 or epoch == epochs:
+        val_loss = evaluate(model, criterion, test_loader)
+        print(f'epoch {epoch}, loss: {loss}, val_loss: {val_loss}')
+    else:
+        print(f'epoch {epoch}, loss: {loss}')
+
+print("===================================")
+
+# 최종 평가
+from sklearn.metrics import accuracy_score
+
+loss2 = evaluate(model, criterion, test_loader)
+print("최종 loss : ", loss2)
+
+
+x_test, y_test = test_loader()
+# print(x_test)
+print(y_test)
+
+'''
+y_pred = np.round(model(x_test).cpu().detach().numpy())
+
+
+y_test = y_test.cpu().numpy()
+# .cpu()안했을 때  device='cuda:0', grad_fn=<SigmoidBackward0>
+# print(y_pred)
+# print(y_test)
+acc = accuracy_score(y_test, y_pred)
+print("acc : ", acc)
+# 예측 함수 정의
+# def predict(model, x):
+#     model.eval()  # 평가 모드
+#     with torch.no_grad():
+#         predictions = model(x)
+#         predicted_classes = (predictions >= 0.5).float()  # 0.5를 기준으로 이진값으로 변환
+#     return predicted_classes
+
+# # 예측
+# predictions = predict(model, x_test)
+# print('x_test의 예측값 : ', predictions)
+
+'''
