@@ -74,7 +74,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.01)
 
 # 훈련 함수 정의
 def train(model, criterion, optimizer, train_loader):
-    model.train()
+    # model.train()
     total_loss = 0
     for x_batch, y_batch in train_loader:
         optimizer.zero_grad()
